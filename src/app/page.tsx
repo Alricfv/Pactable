@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { FeatureSection } from "@/components/FeatureSection"
+import { EmailBuzz } from "@/components/EmailBuzz"
 
 export default function Home() {
   return (
@@ -85,6 +86,7 @@ export default function Home() {
         </div>
       </main>
       <FeatureSection />
+      <EmailBuzz />
     </>
 
   );
