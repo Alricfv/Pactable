@@ -1,20 +1,23 @@
 'use client'
 
 import React, { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("")
+  const supabase = createClient()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const router = useRouter()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(null)
-    const { data, error } = await supabase.auth.signUp({ 
+    const { error } = await supabase.auth.signUp({ 
         email,
         password,
         options: {
@@ -26,7 +29,7 @@ export default function SignUpPage() {
     if (error) {
       setError(error.message)
     } else {
-      setSuccess("Check your email for a confirmation link!")
+        router.push('/dashboard')
     }
   }
 

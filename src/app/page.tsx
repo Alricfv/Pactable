@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { FeatureSection } from "@/components/FeatureSection"
 import { EmailBuzz } from "@/components/EmailBuzz"
@@ -77,9 +78,11 @@ export default function Home() {
           Create simple agreements fast.
         </h2>
         <div className="flex flex-col sm:flex-row gap-4 my-5  sm:max-w-none">
-          <Button className="h-18 rounded-md px-12 text-xl font-bold">
-            Try it Out!
-          </Button>
+          <Link href="/signup">
+            <Button className="h-18 rounded-md px-12 text-xl font-bold">
+              Try it Out!
+            </Button>
+          </Link>
           <Button className ="h-18 rounded-md px-12 text-xl font-bold" variant = "outline" >
             Learn more
           </Button>

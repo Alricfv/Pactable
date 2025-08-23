@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabaseClient'
 import { FcGoogle } from 'react-icons/fc'
 
 
@@ -9,11 +10,18 @@ export default function SignInPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState<string | null>(null)
+    const router = useRouter()
+    const supabase = createClient()
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault()
         const { error } = await supabase.auth.signInWithPassword({ email, password })
-        setError(error?.message ?? null)
+        if (error) {
+            setError(error.message)
+        } 
+        else{
+            router.push('/dashboard')
+        }
     }
 
     const handleGoogleSignIn = async () => {
