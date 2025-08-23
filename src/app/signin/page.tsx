@@ -25,51 +25,56 @@ export default function SignInPage() {
 
     return(
         <div className="flex items-center justify-center min-h-[70vh]" >
-            <form 
-                onSubmit={handleSignIn} 
-                className="flex flex-col gap-4 max-w-xs w-full"
-            >
+            <div className="w-full max-w-xs space-y-6">
                 <h2 className="text-2xl font-bold text-center mb-2">Log In</h2>
-                <input
-                    className="bg-slate-950 rounded px-3 py-2 text-white"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="Email"
-                    type="email"
-                    required
-                />
-                <input
-                    className="bg-slate-950 rounded px-3 py-2 text-white"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="Password"
-                    type="password"
-                    required
-                />
-                <button
-                    type="submit"
-                    className="bg-white text-black rounded px-3 py-2"
+                <form 
+                    onSubmit={handleSignIn} 
+                    className="space-y-4"
                 >
-                    Continue
+                    
+                    <input
+                        className="bg-slate-950 rounded px-3 py-2 text w-full"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="Email"
+                        type="email"
+                        required
+                    />
+                    <input
+                        className="bg-slate-950 rounded px-3 py-2 text-white w-full"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="Password"
+                        type="password"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        className="bg-white text-black rounded px-3 py-2"
+                        style={{width:'100%'}}
+                    >
+                        Continue
+                    </button>
+                    {error && <div className="text-red">{error}</div>}
+                </form>
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-700"/>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-[#09090b] px-2 text-gray-400">
+                            Or....
+                        </span>
+                    </div>
+                </div>
+                <button
+                    onClick={handleGoogleSignIn}
+                    className="bg-white w-full flex items-center justify-center gap-2 text-black rounded px-3 py-3 font-semibold hover:bg-gray-200"
+                >
+                    <FcGoogle className=" h-5 w-5" />
+                    Sign in with Google
                 </button>
-                {error && <div className="text-red">{error}</div>}
-            </form>
-            <div>
-                <div>
-                    <span></span>
-                </div>
-                <div>
-                    <span>
-                        Or....
-                    </span>
-                </div>
             </div>
-            <Button
-                onClick={handleGoogleSignIn}
-            >
-                <FcGoogle className="mr-2 h-5 w-5" />
-                Sign in with Google
-            </Button>
         </div>
     )
 }
