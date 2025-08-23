@@ -5,8 +5,8 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Pactable | Simple AI-Powered Agreement Generator",
-  description: "Create and share simple agreements fast. Perfect for students, freelancers and housemates managing projects, rent or quick deals.",
+  title: "Pactable | Get quick agreements",
+  description: "Create and share simple agreements fast. Perfect for housemates agreeing to rent/responsibilities and students doing group projects, rent or quick deals.",
   keywords: [
     "agreement generator",
     "agreement freelancer",
