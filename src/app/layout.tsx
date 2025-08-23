@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Inter } from "next/font/google";
+import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,9 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className + " bg-[#09090b] text-white "}>
         <Navbar />
         <main className="pt-24 min-h-[80vh]">{children}</main>
-        <footer className="border-t py-20 text-center text-sm ">
-          © {new Date().getFullYear()} Pactable. All rights reserved.
-        </footer>
+        <Footer />
       </body>
     </html>
   );
