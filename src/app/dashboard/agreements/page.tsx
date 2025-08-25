@@ -133,7 +133,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
     }
 
     return(
-        <div className= "flex flex-col lg:flex-row gap-8">
+        <div className= "flex flex-col lg:flex-row gap-8 p-4">
             <div className="w-full lg:w-1/2">
                 <button onClick={onBack} className="text-indigo-400 hover:underline mb-4">
                     &larr; Back to templates
@@ -219,7 +219,49 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                 </form>
             </div>
         </div>
+    
     )
 }
+function SortableSection({ section, onUpdate, onDelete }: { section: any, onUpdate: Function, onDelete: Function }) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedTitle, setEditedTitle] = useState(section.title)
+  const [editedTerms, setEditedTerms] = useState(section.terms.join('\n'))
 
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: section.id })
+  const style = { transform: CSS.Transform.toString(transform), transition }
+
+  const handleSave = () => {
+    onUpdate(section.id, editedTitle, editedTerms.split('\n').filter((t:string) => t.trim() !== ''))
+    setIsEditing(false)
+  }
+
+  if (isEditing) {
+    return (
+      <div ref={setNodeRef} style={style} className="p-4 bg-[#1a1a1a] rounded-lg border border-indigo-500 space-y-3">
+        <input type="text" value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} className="w-full bg-[#000000] rounded-md p-2 text-white font-semibold" />
+        <textarea value={editedTerms} onChange={(e) => setEditedTerms(e.target.value)} rows={5} className="w-full bg-[#000000] rounded-md p-2 text-white text-sm" />
+        <div className="flex gap-2">
+          <button type="button" onClick={handleSave} className="bg-indigo-500 text-white px-3 py-1 rounded-md text-sm">Save</button>
+          <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-600 text-white px-3 py-1 rounded-md text-sm">Cancel</button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-start gap-3 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626]">
+      <button type="button" {...attributes} {...listeners} className="cursor-grab text-gray-500 hover:text-white pt-1">
+        <GripVertical size={20} />
+      </button>
+      <div className="flex-grow">
+        <h3 className="font-semibold text-white">{section.title}</h3>
+        <p className="text-sm text-gray-400 mt-1 line-clamp-2">{section.terms.join(' ')}</p>
+      </div>
+      <div className="flex gap-2">
+        <button type="button" onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-white"><Pencil size={16} /></button>
+        <button type="button" onClick={() => onDelete(section.id)} className="text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
+      </div>
+    </div>
+  )
+}
 
