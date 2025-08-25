@@ -1,74 +1,81 @@
 [
   {
-    "id": "housemate_rent_bills",
-    "title": "Rent & Bills Agreement",
-    "terms": [
-      "All housemates agree to split rent equally unless otherwise specified.",
-      "Utility bills (electricity, water, internet, gas) will be divided equally.",
-      "Rent and bills must be paid by the 1st of each month to the designated housemate/landlord.",
-      "Late payments beyond 5 days will require informing all housemates.",
-      "If a housemate moves out, they are responsible for their share until a replacement is found."
-    ]
-  },
-  {
-    "id": "housemate_chores",
-    "title": "Chores & Cleaning Agreement",
-    "terms": [
-      "Each housemate will take turns cleaning shared spaces weekly (kitchen, bathroom, living room).",
-      "Kitchen must be cleaned after cooking, including dishes and surfaces.",
-      "Garbage duty rotates daily among housemates, with bins taken out on collection day.",
-      "Neglected chores may be reassigned or resolved in a house meeting.",
-      "Everyone agrees to keep personal items out of shared spaces."
-    ]
-  },
-  {
-    "id": "housemate_noise",
-    "title": "Noise & Quiet Hours Agreement",
-    "terms": [
-      "Quiet hours are from 11 PM to 7 AM on weekdays and 1 AM to 9 AM on weekends.",
-      "Music, parties, and loud gatherings require housemate approval in advance.",
-      "Headphones must be used for late-night gaming, music, or calls.",
-      "Housemates agree to respect sleep, study, and work schedules."
-    ]
-  },
-  {
-    "id": "housemate_guests",
-    "title": "Guests & Visitors Agreement",
-    "terms": [
-      "Housemates must give at least 24 hours' notice before bringing overnight guests.",
-      "Guests staying more than 3 nights in a week require group approval.",
-      "Housemates are responsible for their guests’ behavior and damages.",
-      "Guests may not use another housemate’s personal items without permission."
-    ]
-  },
-  {
-    "id": "housemate_supplies",
-    "title": "Shared Supplies Agreement",
-    "terms": [
-      "Toilet paper, cleaning products, and other shared supplies will be bought jointly.",
-      "Costs for supplies will be split equally among all housemates.",
-      "If someone uses significantly more of a shared item, they agree to contribute extra.",
-      "All purchases will be tracked in a shared expense app or log."
-    ]
-  },
-  {
-    "id": "housemate_food",
-    "title": "Food & Kitchen Use Agreement",
-    "terms": [
-      "Each housemate’s food is their own unless explicitly shared.",
-      "Shared cooking staples (oil, salt, spices) will be bought jointly.",
-      "Fridge and cupboard space will be divided equally.",
-      "Housemates agree not to take food that isn’t theirs without permission."
-    ]
-  },
-  {
-    "id": "housemate_disputes",
-    "title": "Dispute Resolution Agreement",
-    "terms": [
-      "Disagreements will be discussed openly during house meetings.",
-      "If unresolved, housemates agree to a majority vote.",
-      "For ongoing conflicts, housemates may bring in an external mediator (friend, landlord, RA).",
-      "Everyone commits to respectful communication and avoiding passive-aggressive behavior."
+    "id": "housemate_agreement",
+    "title": "Housemate Agreement",
+    "description": "A comprehensive agreement for living with housemates, covering rent, chores, guests, and more.",
+    "sections": [
+      {
+        "id": "rent_bills",
+        "title": "Rent & Bills",
+        "terms": [
+          "All housemates agree to split rent equally unless otherwise specified.",
+          "Utility bills (electricity, water, internet, gas) will be divided equally.",
+          "Rent and bills must be paid by the 1st of each month to the designated housemate/landlord.",
+          "Late payments beyond 5 days will require informing all housemates.",
+          "If a housemate moves out, they are responsible for their share until a replacement is found."
+        ]
+      },
+      {
+        "id": "chores",
+        "title": "Chores & Cleaning",
+        "terms": [
+          "Each housemate will take turns cleaning shared spaces weekly (kitchen, bathroom, living room).",
+          "Kitchen must be cleaned after cooking, including dishes and surfaces.",
+          "Garbage duty rotates daily among housemates, with bins taken out on collection day.",
+          "Neglected chores may be reassigned or resolved in a house meeting.",
+          "Everyone agrees to keep personal items out of shared spaces."
+        ]
+      },
+      {
+        "id": "noise",
+        "title": "Noise & Quiet Hours",
+        "terms": [
+          "Quiet hours are from 11 PM to 7 AM on weekdays and 1 AM to 9 AM on weekends.",
+          "Music, parties, and loud gatherings require housemate approval in advance.",
+          "Headphones must be used for late-night gaming, music, or calls.",
+          "Housemates agree to respect sleep, study, and work schedules."
+        ]
+      },
+      {
+        "id": "guests",
+        "title": "Guests & Visitors",
+        "terms": [
+          "Housemates must give at least 24 hours' notice before bringing overnight guests.",
+          "Guests staying more than 3 nights in a week require group approval.",
+          "Housemates are responsible for their guests’ behavior and damages.",
+          "Guests may not use another housemate’s personal items without permission."
+        ]
+      },
+      {
+        "id": "supplies",
+        "title": "Shared Supplies",
+        "terms": [
+          "Toilet paper, cleaning products, and other shared supplies will be bought jointly.",
+          "Costs for supplies will be split equally among all housemates.",
+          "If someone uses significantly more of a shared item, they agree to contribute extra.",
+          "All purchases will be tracked in a shared expense app or log."
+        ]
+      },
+      {
+        "id": "food",
+        "title": "Food & Kitchen Use",
+        "terms": [
+          "Each housemate’s food is their own unless explicitly shared.",
+          "Shared cooking staples (oil, salt, spices) will be bought jointly.",
+          "Fridge and cupboard space will be divided equally.",
+          "Housemates agree not to take food that isn’t theirs without permission."
+        ]
+      },
+      {
+        "id": "disputes",
+        "title": "Dispute Resolution",
+        "terms": [
+          "Disagreements will be discussed openly during house meetings.",
+          "If unresolved, housemates agree to a majority vote.",
+          "For ongoing conflicts, housemates may bring in an external mediator (friend, landlord, RA).",
+          "Everyone commits to respectful communication and avoiding passive-aggressive behavior."
+        ]
+      }
     ]
   }
 ]

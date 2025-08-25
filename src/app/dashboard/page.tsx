@@ -4,18 +4,16 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabaseClient';
 
-const supabase = createClient();
+
 
 export default function DashboardPage() {
     const router = useRouter();
+    const supabase = createClient();
     useEffect(() => {
         const checkAuth = async() => {
             const {data: {session}} = await supabase.auth.getSession();
             if (!session){
                 router.push('/');
-            }
-            else{
-                router.replace('/dashboard');
             }
         };
         checkAuth();

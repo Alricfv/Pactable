@@ -5,17 +5,17 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import templates from '@/lib/templates.json'
 
-const supabase = createClient()
-const router = useRouter()
-const [title, setTitle] = useState('')
-const [content, setContent] = useState('')
-const [participants, setParticipants] = useState([''])
-const [error, setError] = useState<string | null>(null)
-
-type Template = {
+type TemplateSection = {
     id: string;
     title: string;
     terms: string[];
+};
+
+type Template= {
+    id: string;
+    title: string;
+    description: string;
+    sections: TemplateSection[];
 };
 
 export default function CreateAgreementPage(){
@@ -45,7 +45,7 @@ export default function CreateAgreementPage(){
                                 {template.title}
                             </h2>
                             <p className="mt-2 text-sm text-gray-400">
-                                {template.terms[0]}
+                                {template.description}
                             </p>
                         </button>
                     ))}
@@ -59,6 +59,20 @@ export default function CreateAgreementPage(){
 
 function AgreementForm({template, onBack}: {template: Template; onBack: () => void}) {
 
+    const formatContentFromTemplate = (sections: TemplateSection[]) => {
+        return sections.map(section =>
+            `### ${section.title}\n\n${section.terms.map(term => `- ${term}`).join('\n')}`
+        ).join ('\n\n\n');
+    }
+
+    const supabase = createClient()
+    const router = useRouter()
+    const [title, setTitle] = useState(template.title)
+    const [content, setContent] = useState(formatContentFromTemplate(template.sections))
+    const [participants, setParticipants] = useState([''])
+    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
+
     const handleParticipantChange= (index: number, value: string) => {
         const newParticipants= [...participants]
         newParticipants[index] = value
@@ -71,13 +85,31 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
 
     const handleCreateAgreement = async (e: React.FormEvent) => {
         e.preventDefault()
+        setLoading(true)
         setError(null)
 
-        console.log({title, content, participants})
+        const validParticipants = participants.filter(email => email.trim() !== '')
+
+        const { data, error: rpcError } = await supabase.rpc('create_agreement_with_participants', {
+            agreement_title: title,
+            agreement_content: content,
+            participant_emails: validParticipants
+        })
+
+        if (rpcError){
+            setError(`Failed to create agreement: ${rpcError.message}`)
+            console.error(rpcError)
+        }
+        
+        else{
+            console.log('Another successful agreement! ID:', data)
+            router.push('/dashboard/agreements')
+        }
+        setLoading(false)
     }
 
     return(
-        <div>
+        <div className= "p-6 rounded-lg border border-[#262626] bg-[#0f0f0f]">
             <button onClick={onBack} className="text-indigo-400 hover:underline mb-4">
                 &larr; Back to templates
             </button>
@@ -92,7 +124,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                     <input
                         id="title"
                         type="text"
-                        value="title"
+                        value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
                         required
@@ -116,7 +148,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                         Participants
                     </label>
                     <p className="text-xs text-gray-500 mb-2">
-                        Add the email addresses of all agreement participants.
+                        Add the email addresses of all agreement participants. They must have an account!
                     </p>
                     <div className="space-y-2">
                         {participants.map((email, index) =>(
@@ -135,8 +167,8 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                         + Add another participant
                     </button>
                 </div>
-                <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-indigo-600">
-                    Create and Send Agreement
+                <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-indigo-600 disabled:bg-indigo-400" disabled={loading}>
+                    {loading ? 'Creating...' :'Create and Send Agreement'}
                 </button>
                 {error && <p className="text-red-500 text-center  mt-2">{error}</p>}
             </form>
