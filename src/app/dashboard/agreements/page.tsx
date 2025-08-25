@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabaseClient'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import templates from '@/lib/templates.json'
+import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core'
+import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { GripVertical, Pencil, Trash2, PlusCircle } from 'lucide-react'
 
 type TemplateSection = {
     id: string;
@@ -21,10 +25,6 @@ type Template= {
 export default function CreateAgreementPage(){
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null)
 
-    const handleSelectTemplate = (template: Template) => {
-        setSelectedTemplate(template)
-    }
-
     if (!selectedTemplate) {
         return(
             <div>
@@ -38,7 +38,7 @@ export default function CreateAgreementPage(){
                     {templates.map((template) =>(
                         <button
                             key={template.id}
-                            onClick={() => handleSelectTemplate(template)}
+                            onClick={() => setSelectedTemplate(template)}
                             className="block p-6 bg-[#0f0f0f] rounded-lg border border-[#262626] hover:border-indigo-500 text-left transition"
                         >
                             <h2 className="text-xl font-semibold text-white">
@@ -57,21 +57,41 @@ export default function CreateAgreementPage(){
     return <AgreementForm template={selectedTemplate} onBack={() => setSelectedTemplate(null)} />    
 }
 
-function AgreementForm({template, onBack}: {template: Template; onBack: () => void}) {
 
-    const formatContentFromTemplate = (sections: TemplateSection[]) => {
-        return sections.map(section =>
-            `### ${section.title}\n\n${section.terms.map(term => `- ${term}`).join('\n')}`
-        ).join ('\n\n\n');
-    }
+
+function AgreementForm({template, onBack}: {template: Template; onBack: () => void}) {
 
     const supabase = createClient()
     const router = useRouter()
     const [title, setTitle] = useState(template.title)
-    const [content, setContent] = useState(formatContentFromTemplate(template.sections))
+    const [sections, setSections] = useState(template.sections.map(s => ({...s, originalId: s.id})))
     const [participants, setParticipants] = useState([''])
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const {active, over } = event
+        if (over && active.id !== over.id){
+            setSections((items) => {
+                const oldIndex = items.findIndex((item) => item.id === active.id)
+                const newIndex = items.findIndex((item) => item.id === over.id)
+                return arrayMove(items, oldIndex, newIndex)
+            })
+        }
+    }
+
+    const handleUpdateSection = (id: string, newTitle: string, newTerms: string[]) => {
+        setSections(sections.map(s => s.id === id ? {...s, title: newTitle, terms: newTerms } : s))
+    }
+
+    const handleAddSection = () => {
+        const newId = `custom-${Date.now()}`
+        setSections([...sections, { id: newId, originalId: newId, title: 'New Section', terms: ['Add your terms.']}])
+    }
+
+    const handleDeleteSection = (id: string) => {
+        setSections(sections.filter(s => s.id !== id))
+    }
 
     const handleParticipantChange= (index: number, value: string) => {
         const newParticipants= [...participants]
@@ -88,11 +108,15 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
         setLoading(true)
         setError(null)
 
+        const finalContent=sections.map(section =>
+            `### ${section.title}\n\n${section.terms.map(term => `- ${term}`).join('\n')}`
+        ).join(`\n\n\n`)
+
         const validParticipants = participants.filter(email => email.trim() !== '')
 
         const { data, error: rpcError } = await supabase.rpc('create_agreement_with_participants', {
             agreement_title: title,
-            agreement_content: content,
+            agreement_content: finalContent,
             participant_emails: validParticipants
         })
 
@@ -109,69 +133,93 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
     }
 
     return(
-        <div className= "p-6 rounded-lg border border-[#262626] bg-[#0f0f0f]">
-            <button onClick={onBack} className="text-indigo-400 hover:underline mb-4">
-                &larr; Back to templates
-            </button>
-            <h1 className="text-3xl font-bold text-white">
-                Create Agreement
-            </h1>
-            <form onSubmit={handleCreateAgreement} className="mt-6 space-y-6 max-w-3xl">
-                <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-300">
-                        Title
-                    </label>
-                    <input
-                        id="title"
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="content" className="block text-sm font-medium text-gray-300">
-                        Agreement Terms
-                    </label>
-                    <textarea
-                        id="content"
-                        rows={12}
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-300">
-                        Participants
-                    </label>
-                    <p className="text-xs text-gray-500 mb-2">
-                        Add the email addresses of all agreement participants. They must have an account!
-                    </p>
-                    <div className="space-y-2">
-                        {participants.map((email, index) =>(
-                            <input
-                                key={index}
-                                type="email"
-                                placeholder={`participant-${index + 1}@example.com`}
-                                value={email}
-                                onChange={(e) => handleParticipantChange(index, e.target.value)}
-                                className="block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
-                                required
-                            />
-                        ))}
-                    </div>
-                    <button type="button" onClick={addParticipant} className="mt-2 text-sm text-indigo-400 hover:underline">
-                        + Add another participant
-                    </button>
-                </div>
-                <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-indigo-600 disabled:bg-indigo-400" disabled={loading}>
-                    {loading ? 'Creating...' :'Create and Send Agreement'}
+        <div className= "flex flex-col lg:flex-row gap-8">
+            <div className="w-full lg:w-1/2">
+                <button onClick={onBack} className="text-indigo-400 hover:underline mb-4">
+                    &larr; Back to templates
                 </button>
-                {error && <p className="text-red-500 text-center  mt-2">{error}</p>}
-            </form>
+                <h1 className="text-3xl font-bold text-white">
+                    Create Agreement
+                </h1>
+                <form onSubmit={handleCreateAgreement} className="mt-6 space-y-6 max-w-3xl">
+                    <div>
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-300">
+                            Title
+                        </label>
+                        <input
+                            id="title"
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <h2 className= "text-lg font-medium text-gray-200 mb-2">
+                            Agreement Sections
+                        </h2>
+                        <DndContext
+                            sensors={[]} 
+                            collisionDetection={closestCenter} 
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={sections}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                <div className="space-y-3">
+                                    {sections.map((section) => (
+                                        <SortableSection
+                                            key={section.id}
+                                            section={section}
+                                            onUpdate={handleUpdateSection}
+                                            onDelete={handleDeleteSection}
+                                        />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
+                        <button 
+                        type="button" 
+                        onClick={handleAddSection} 
+                        className="mt-4 flex items-center gap-2 text-indigo-400 hover:underline"
+                        >
+                            Add New Section
+                        </button>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300">
+                            Participants
+                        </label>
+                        <p className="text-xs text-gray-500 mb-2">
+                            Add the email addresses of all agreement participants. They must have an account!
+                        </p>
+                        <div className="space-y-2">
+                            {participants.map((email, index) =>(
+                                <input
+                                    key={index}
+                                    type="email"
+                                    placeholder={`participant-${index + 1}@example.com`}
+                                    value={email}
+                                    onChange={(e) => handleParticipantChange(index, e.target.value)}
+                                    className="block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
+                                    required
+                                />
+                            ))}
+                        </div>
+                        <button type="button" onClick={addParticipant} className="mt-2 text-sm text-indigo-400 hover:underline">
+                            + Add another participant
+                        </button>
+                    </div>
+                    <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-indigo-600 disabled:bg-indigo-400" disabled={loading}>
+                        {loading ? 'Creating...' :'Create and Send Agreement'}
+                    </button>
+                    {error && <p className="text-red-500 text-center  mt-2">{error}</p>}
+                </form>
+            </div>
         </div>
     )
 }
+
+
