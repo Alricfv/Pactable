@@ -108,6 +108,14 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
         setLoading(true)
         setError(null)
 
+        const { data: {session}} = await supabase.auth.getSession();
+        if(!session){
+            setError("Your session has expired, please login again.")
+            setLoading(false);
+            setTimeout(() => router.push('/signin'), 2000)
+            return;
+        }
+
         const finalContent=sections.map(section =>
             `### ${section.title}\n\n${section.terms.map(term => `- ${term}`).join('\n')}`
         ).join(`\n\n\n`)
