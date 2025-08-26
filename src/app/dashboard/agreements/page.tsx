@@ -262,8 +262,15 @@ function SortableSection({ section, onUpdate, onDelete }: { section: any, onUpda
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-start gap-3 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626]">
-      <button type="button" {...attributes} {...listeners} className="cursor-grab text-gray-500 hover:text-white pt-1">
+    <div 
+        ref={setNodeRef} 
+        style={style} 
+        className="flex items-start gap-3 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626] transition hover:scale-[1.02] hover:shadow-[0_0_16px_2px_rgba(255,255,255,0.32)]"
+    >
+      <button 
+        type="button" {...attributes} {...listeners} 
+        className="cursor-grab text-gray-500 hover:text-white pt-1"
+      >
         <GripVertical size={20} />
       </button>
       <div className="flex-grow">
