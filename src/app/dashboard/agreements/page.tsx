@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabaseClient'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import templates from '@/lib/templates.json'
-import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core'
+import { DndContext, closestCenter, type DragEndEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Pencil, Trash2, PlusCircle } from 'lucide-react'
@@ -68,6 +68,11 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
     const [participants, setParticipants] = useState([''])
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor)
+    );
 
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over } = event
@@ -168,7 +173,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                             Agreement Sections
                         </h2>
                         <DndContext
-                            sensors={[]} 
+                            sensors={sensors} 
                             collisionDetection={closestCenter} 
                             onDragEnd={handleDragEnd}
                         >
@@ -193,7 +198,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                         onClick={handleAddSection} 
                         className="mt-4 flex items-center gap-2 text-indigo-400 hover:underline"
                         >
-                            Add New Section
+                           <PlusCircle size={16}/> Add New Section
                         </button>
                     </div>
                     <div>
