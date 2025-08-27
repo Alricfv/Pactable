@@ -1,13 +1,14 @@
 'use client'
 
 import { createClient } from '@/lib/supabaseClient'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import templates from '@/lib/templates.json'
 import { DndContext, closestCenter, type DragEndEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Pencil, Trash2, PlusCircle } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, PlusCircle, Download } from 'lucide-react'
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 type TemplateSection = {
     id: string;
@@ -68,11 +69,54 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
     const [participants, setParticipants] = useState([''])
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
+    const [pdfUrl, setPdfUrl] = useState<string>('')
 
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor)
     );
+
+    useEffect(() => {
+        const generatePdf = async () => {
+            const pdfDoc = await PDFDocument.create()
+            let page = pdfDoc.addPage()
+            const { width, height } = page.getSize()
+            const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+            const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+            let y = height - 50
+
+            page.drawText(title, { x:50, y, font: boldFont, size: 24, color: rgb(0, 0, 0)})
+            y -= 40
+
+            for (const section of sections){
+                if (y<100){
+                    page = pdfDoc.addPage();
+                    y = height - 50
+                }
+                
+                page.drawText(section.title, { x:50, y, font: boldFont, size: 16, color: rgb(0, 0, 0)})
+                y -= 25
+                for (const term of section.terms){
+                    page.drawText(`• ${term}`, { x:60, y, font, size: 11, color: rgb(0, 0, 0)})
+                    y -= 20
+                    if (y < 50) {
+                        page = pdfDoc.addPage();
+                        y = height - 50;
+                    }
+                }
+                y -= 10
+            }
+
+            const pdfBytes = await pdfDoc.save()
+            //ok dunno why typescript is so stubborn on this 
+            const blob = new Blob ([pdfBytes as unknown as BlobPart], { type: 'application/pdf'})
+            const url = URL.createObjectURL(blob)
+            setPdfUrl(url)
+
+            return () => URL.revokeObjectURL(url)
+        }
+        generatePdf().catch(console.error);
+    }, [title, sections]);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over } = event
@@ -83,30 +127,36 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                 return arrayMove(items, oldIndex, newIndex)
             })
         }
-    }
+    };
 
     const handleUpdateSection = (id: string, newTitle: string, newTerms: string[]) => {
         setSections(sections.map(s => s.id === id ? {...s, title: newTitle, terms: newTerms } : s))
-    }
+    };
 
     const handleAddSection = () => {
         const newId = `custom-${Date.now()}`
         setSections([...sections, { id: newId, originalId: newId, title: 'New Section', terms: ['Add your terms.']}])
-    }
+    };
 
     const handleDeleteSection = (id: string) => {
         setSections(sections.filter(s => s.id !== id))
-    }
+    };
 
     const handleParticipantChange= (index: number, value: string) => {
         const newParticipants= [...participants]
         newParticipants[index] = value
         setParticipants(newParticipants)
-    }
+    };
 
     const addParticipant = () => {
         setParticipants([...participants, '']);
-    }
+    };
+
+    const removeParticipant = (index: number) => {
+        if (participants.length > 1) {
+            setParticipants(participants.filter((_, i) => i !== index))
+        }
+    };
 
     const handleCreateAgreement = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -119,19 +169,19 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
             setLoading(false);
             setTimeout(() => router.push('/signin'), 2000)
             return;
-        }
+        };
 
         const finalContent=sections.map(section =>
             `### ${section.title}\n\n${section.terms.map(term => `- ${term}`).join('\n')}`
         ).join(`\n\n\n`)
 
-        const validParticipants = participants.filter(email => email.trim() !== '')
+        const validParticipants = participants.filter(email => email.trim() !== '');
 
         const { data, error: rpcError } = await supabase.rpc('create_agreement_with_participants', {
             agreement_title: title,
             agreement_content: finalContent,
             participant_emails: validParticipants
-        })
+        });
 
         if (rpcError){
             setError(`Failed to create agreement: ${rpcError.message}`)
@@ -210,26 +260,55 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                         </p>
                         <div className="space-y-2">
                             {participants.map((email, index) =>(
-                                <input
-                                    key={index}
-                                    type="email"
-                                    placeholder={`participant-${index + 1}@example.com`}
-                                    value={email}
-                                    onChange={(e) => handleParticipantChange(index, e.target.value)}
-                                    className="block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
-                                    required
-                                />
+                                <div key={index} className="flex items-center gap-2">    
+                                    <input
+                                        key={index}
+                                        type="email"
+                                        placeholder={`participant-${index + 1}@example.com`}
+                                        value={email}
+                                        onChange={(e) => handleParticipantChange(index, e.target.value)}
+                                        className="block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
+                                        required
+                                    />
+                                    {participants.length > 1 && (
+                                        <button 
+                                            type="button" 
+                                            onClick={() => removeParticipant(index)} 
+                                            className="text-gray-500 hover:text-red-500"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                </div>
                             ))}
                         </div>
                         <button type="button" onClick={addParticipant} className="mt-2 text-sm text-indigo-400 hover:underline">
                             + Add another participant
                         </button>
                     </div>
-                    <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-indigo-600 disabled:bg-indigo-400" disabled={loading}>
-                        {loading ? 'Creating...' :'Create and Send Agreement'}
-                    </button>
+                    <div className="space-y-3">
+                        <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-indigo-600 disabled:bg-indigo-400" disabled={loading}>
+                            {loading ? 'Creating...' :'Create and Send Agreement'}
+                        </button>
+                        <a
+                            href={pdfUrl}
+                            download={`${title.replace(/\s/g, '_')}.pdf`}
+                            className="w-full flex items-center justify-center gap-2 bg-gray-600 text-white rounded-md px-4 py-3 font-semibold hover:bg-gray-500"
+                        >
+                            <Download size={16}/>Download PDF
+                        </a>
+                    </div>
                     {error && <p className="text-red-500 text-center  mt-2">{error}</p>}
                 </form>
+            </div>
+            <div className="w-full lg:w-1/2 h-[85vh] sticky top-24">
+                {pdfUrl ? (
+                    <iframe src={pdfUrl} width="100%" height="100%" style={{border:'gray', borderRadius:'8px'}} title="Agreement PDF Preview" />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-[#0f0f0f] rounded-lg border border-[#262626]">
+                        <p className="text-gray-400">Updating the PDF</p>
+                    </div>
+                )}
             </div>
         </div>
     
