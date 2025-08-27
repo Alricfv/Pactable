@@ -83,7 +83,9 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
             const { width, height } = page.getSize()
             const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
             const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-            let y = height - 50
+            const margin = 50;
+            const contentWidth = width - (2 * margin);
+            let y = height - margin;
 
             page.drawText(title, { x:50, y, font: boldFont, size: 24, color: rgb(0, 0, 0)})
             y -= 40
@@ -91,20 +93,28 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
             for (const section of sections){
                 if (y<100){
                     page = pdfDoc.addPage();
-                    y = height - 50
+                    y = height - margin
                 }
                 
                 page.drawText(section.title, { x:50, y, font: boldFont, size: 16, color: rgb(0, 0, 0)})
                 y -= 25
+
                 for (const term of section.terms){
-                    page.drawText(`• ${term}`, { x:60, y, font, size: 11, color: rgb(0, 0, 0)})
+                    const fullTerm= `• ${term}`
+                    const wrappedLines = wrapText(fullTerm, font, 11, contentWidth - 10);
+
+                    for (const line of wrappedLines){
+                        if(y < margin){
+                            page = pdfDoc.addPage();
+                            y = height - margin;
+                        }
+                    
+                    page.drawText(line, { x: margin + (line.startsWith('•') ? 0 : 8), y, font, size: 11, color: rgb(0, 0, 0)});
                     y -= 20
-                    if (y < 50) {
-                        page = pdfDoc.addPage();
-                        y = height - 50;
                     }
+                    
                 }
-                y -= 10
+                y -= 10;
             }
 
             const pdfBytes = await pdfDoc.save()
@@ -274,9 +284,9 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                                         <button 
                                             type="button" 
                                             onClick={() => removeParticipant(index)} 
-                                            className="text-gray-500 hover:text-red-500"
+                                            className=" w-9 h-9 flex items-center text-gray-950 justify-center rounded-md bg-red-500 hover:bg-red-600"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={16}  />
                                         </button>
                                     )}
                                 </div>
@@ -354,13 +364,46 @@ function SortableSection({ section, onUpdate, onDelete }: { section: any, onUpda
       </button>
       <div className="flex-grow">
         <h3 className="font-semibold text-white">{section.title}</h3>
-        <p className="text-sm text-gray-400 mt-1 line-clamp-2">{section.terms.join(' ')}</p>
+        
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-white"><Pencil size={16} /></button>
-        <button type="button" onClick={() => onDelete(section.id)} className="text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
+        <button 
+            type="button" 
+            onClick={() => setIsEditing(true)} 
+            className="text-gray-400 hover:text-white"
+        >
+            <Pencil size={16} />
+        </button>
+        <button 
+            type="button" 
+            onClick={() => onDelete(section.id)} 
+            className="w-7 h-7 flex items-center text-gray-950 justify-center rounded-md bg-red-200 hover:bg-red-600"
+        >
+            <Trash2 size={16} />
+        </button>
       </div>
     </div>
   )
 }
 
+function wrapText(text: string, font: any, fontSize: number, maxWidth: number): string[] {
+    const words = text.split(' ');
+    let line = '';
+    const lines: string[] = [];
+
+    for (const word of words){
+        const testLine = line + word + ' ';
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+        if (testWidth > maxWidth && line.length > 0) {
+            lines.push(line.trim());
+            line = word + ' ';
+        }
+        else{
+            line = testLine;
+        }
+    }
+    if (line.length > 0){
+        lines.push(line.trim());
+    }
+    return lines;
+}
