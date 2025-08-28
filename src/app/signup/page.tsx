@@ -11,13 +11,27 @@ export default function SignUpPage() {
   const supabase = createClient()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(null)
-    const { error } = await supabase.auth.signUp({ 
+    setIsLoading(true)
+
+    try{
+      const { data: existingUser, error: lookupError } = await supabase.rpc('get_user_id_by_email', {
+        email_input: email.toLowerCase().trim()
+      });
+
+      if (existingUser){
+        setError("This email is already in use");
+        setIsLoading(false);
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({ 
         email,
         password,
         options: {
@@ -25,12 +39,22 @@ export default function SignUpPage() {
             username: username
            }
         } 
-    })
-    if (error) {
-      setError(error.message)
-    } else {
-        router.push('/dashboard')
+      });
+
+      if (error){
+        setError(error.message);
+      }
+      else{
+        setSuccess('Success! Check your email to confirm your account.')
+      }
+    } 
+    catch(err){
+      console.error("Signup Error:", err);
+      setError("An unexpected error occured. Please try again.");
     }
+    finally{
+      setIsLoading(false);
+    } 
   }
 
   return (
@@ -45,6 +69,7 @@ export default function SignUpPage() {
             placeholder="Username"
             type="text"
             required
+            disabled={isLoading}
           />
           <input
             className="bg-[#000000] rounded px-3 py-2 text-white w-full"
@@ -53,6 +78,7 @@ export default function SignUpPage() {
             placeholder="Email"
             type="email"
             required
+            disabled={isLoading}
           />
           <input
             className="bg-[#000000] rounded px-3 py-2 text-white w-full"
@@ -61,21 +87,23 @@ export default function SignUpPage() {
             placeholder="Password"
             type="password"
             required
+            disabled={isLoading}
           />
           <button
             type="submit"
             className="bg-white text-black rounded px-3 py-2 w-full"
+            disabled={isLoading}
           >
-            Continue
+            {isLoading ? 'Processing...' : 'Continue'}
           </button>
+          {error && <div className="text-red-500 text-center text-lg">{error}</div>}
+          {success && <div className="text-green-500 text-center text-lg">{success}</div>}
           <p className = "text-center text-gray-400 text-sm mt-4">
             Already have an account?{' '}
                 <a href="/signin" className="text-indigo-400 underline">
                     Sign In
                 </a>
           </p>
-          {error && <div className="text-red-500">{error}</div>}
-          {success && <div className="text-green-500">{success}</div>}
         </form>
       </div>
     </div>
