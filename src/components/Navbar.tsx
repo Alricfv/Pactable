@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { createClient } from '@/lib/supabaseClient'
@@ -14,6 +14,9 @@ const navigation = [
   { name: 'Contact', href: '/' },
 ]
 
+let authPromise: Promise<any>;
+
+
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
@@ -21,8 +24,10 @@ export function Navbar() {
   const supabase = createClient()
   const router = useRouter()
   const pathname = usePathname()
+  const [navigationItems, setNavigationItems] = useState<typeof guestNavigation>([])
+  const [showLoginLink, setShowLoginLink] = useState<boolean | null>(null)
 
-  const navigation = [
+  const guestNavigation = [
   { name: 'Try it Out!', href: '/' },
   { name: 'Features', href: '/' },
   { name: 'About', href: '/' },
@@ -30,12 +35,44 @@ export function Navbar() {
   ]
 
   const authNavigation = [
-  { name: 'Dashboard', href: '/' },
-  { name: 'Agreements', href: '/' },
-  { name: 'Profile', href: '/' },
-  { name: 'Pricing', href: '/' },
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Agreements', href: '/dashboard/agreements' },
+  { name: 'Profile', href: '/dashboard/profile' },
+  { name: 'Pricing', href: '/dashboard/pricing' },
   ]
 
+  const navigation = user ? authNavigation : guestNavigation
+
+  useEffect(() =>{
+    if (!authPromise){
+      authPromise = supabase.auth.getSession();
+    }
+
+    authPromise.then(({data: {session} }) => {
+      const isAuthenticated = !!session?.user;
+      setUser(session?.user)
+      setNavigationItems(isAuthenticated ? authNavigation : guestNavigation);
+      setShowLoginLink(!isAuthenticated);
+    });
+
+    const { data: {subscription} } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        const isAuthenticated = !!session?.user;
+        setUser(session?.user)
+        setNavigationItems(isAuthenticated ? authNavigation : guestNavigation);
+        setShowLoginLink(!isAuthenticated);
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe
+    }
+  })
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
   
   
   
@@ -45,7 +82,7 @@ export function Navbar() {
     <header className="absolute inset-x-0 top-0 z-50">
       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
+          <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Pactable</span>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Pactable</h1>
           </a>
@@ -62,7 +99,11 @@ export function Navbar() {
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
-            <a key={item.name} href={item.href} className="text-sm/6 font-semibold text-gray-900 dark:text-white">
+            <a 
+              key={item.name} 
+              href={item.href} 
+              className="text-sm/6 font-semibold text-gray-900 dark:text-white"
+            >
               {item.name}
             </a>
           ))}
