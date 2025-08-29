@@ -18,10 +18,10 @@ export default function CreateAgreementPage({templates}: {templates: Template[]}
     if (!selectedTemplate) {
         return(
             <div>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-5xl font-bold text-white text-center">
                     Choose a Template
                 </h1>
-                <p className="mt-2 text-gray-400">
+                <p className="mt-2 text-gray-400 text-center">
                     Select a base template for your agreement!
                 </p>
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
