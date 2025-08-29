@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { createClient } from '@/lib/supabaseClient'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 
 const navigation = [
   { name: 'Try it Out!', href: '/dashboard' },
@@ -13,6 +16,30 @@ const navigation = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const navigation = [
+  { name: 'Try it Out!', href: '/' },
+  { name: 'Features', href: '/' },
+  { name: 'About', href: '/' },
+  { name: 'Contact', href: '/' },
+  ]
+
+  const authNavigation = [
+  { name: 'Dashboard', href: '/' },
+  { name: 'Agreements', href: '/' },
+  { name: 'Profile', href: '/' },
+  { name: 'Pricing', href: '/' },
+  ]
+
+  
+  
+  
+  
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
