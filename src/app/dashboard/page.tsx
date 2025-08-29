@@ -21,11 +21,11 @@ export default function DashboardPage() {
 
     return(
         <div>
-            <h1 className="text-3xl font-bold text-white">
-                Dashboard
+            <h1 className="text-5xl font-bold text-white text-center">
+                Welcome to your Dashboard!
             </h1>
-            <p className="mt-2 text-gray-400">
-                Welcome to your dashboard.
+            <p className="mt-2 text-gray-300 text-center">
+                Let's agree on stuff shall we?
             </p>
         </div>
     )
