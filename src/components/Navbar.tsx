@@ -7,82 +7,41 @@ import { createClient } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
-const navigation = [
-  { name: 'Try it Out!', href: '/dashboard' },
+let authPromise: Promise<any> | null = null;
+
+const publicNavigation = [
+  { name: 'Try it Out!', href: '/' },
   { name: 'Features', href: '/' },
   { name: 'About', href: '/' },
   { name: 'Contact', href: '/' },
 ]
 
-let authPromise: Promise<any>;
-
-
-export function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const supabase = createClient()
-  const router = useRouter()
-  const pathname = usePathname()
-  const [navigationItems, setNavigationItems] = useState<typeof guestNavigation>([])
-  const [showLoginLink, setShowLoginLink] = useState<boolean | null>(null)
-
-  const guestNavigation = [
-  { name: 'Try it Out!', href: '/' },
-  { name: 'Features', href: '/' },
-  { name: 'About', href: '/' },
-  { name: 'Contact', href: '/' },
-  ]
-
-  const authNavigation = [
+const dashboardNavigation = [
   { name: 'Dashboard', href: '/dashboard' },
   { name: 'Agreements', href: '/dashboard/agreements' },
   { name: 'Profile', href: '/dashboard/profile' },
   { name: 'Pricing', href: '/dashboard/pricing' },
-  ]
+]
 
-  const navigation = user ? authNavigation : guestNavigation
 
-  useEffect(() =>{
-    if (!authPromise){
-      authPromise = supabase.auth.getSession();
-    }
-
-    authPromise.then(({data: {session} }) => {
-      const isAuthenticated = !!session?.user;
-      setUser(session?.user)
-      setNavigationItems(isAuthenticated ? authNavigation : guestNavigation);
-      setShowLoginLink(!isAuthenticated);
-    });
-
-    const { data: {subscription} } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        const isAuthenticated = !!session?.user;
-        setUser(session?.user)
-        setNavigationItems(isAuthenticated ? authNavigation : guestNavigation);
-        setShowLoginLink(!isAuthenticated);
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe
-    }
-  })
+export function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const supabase = createClient()
+  const router = useRouter()
+  const pathname = usePathname()
+  const isProtectedRoute = pathname.startsWith('/dashboard')
+  const navigation = isProtectedRoute ? dashboardNavigation : publicNavigation
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/')
   }
-  
-  
-  
-  
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
-          <a href="/" className="-m-1.5 p-1.5">
+          <a href={isProtectedRoute ? "/dashboard" : "/"} className="-m-1.5 p-1.5">
             <span className="sr-only">Pactable</span>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Pactable</h1>
           </a>
