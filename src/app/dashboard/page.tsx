@@ -17,6 +17,7 @@ export default async function DashboardPage() {
             title,
             created_at,
             created_by,
+            content,
             agreement_participants!inner(*)
         `)
         .eq('agreement_participants.user_id', user.id)
