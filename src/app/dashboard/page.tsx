@@ -16,6 +16,7 @@ export default async function DashboardPage() {
             id,
             title,
             created_at,
+            created_by,
             agreement_participants!inner(*)
         `)
         .eq('agreement_participants.user_id', user.id)
@@ -25,5 +26,5 @@ export default async function DashboardPage() {
         console.error("Error fetching agreements:", error);
     }
     
-    return <DashboardClient agreements={agreements || []} />
+    return <DashboardClient agreements={agreements || []} userId={user.id} />
 }
