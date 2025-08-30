@@ -16,8 +16,7 @@ export default async function DashboardPage() {
             id,
             title,
             created_at,
-            status,
-            agreement_participants!inner(user_id)
+            agreement_participants!inner(*)
         `)
         .eq('agreement_participants.user_id', user.id)
         .order('created_at', {ascending: false});
