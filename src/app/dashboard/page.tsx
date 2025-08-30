@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabaseServer';
 import { redirect } from 'next/navigation';
+import DashboardClient from './DashboardClient';
 
 export default async function DashboardPage() {
     const supabase = createClient();
@@ -24,14 +25,6 @@ export default async function DashboardPage() {
     if (error){
         console.error("Error fetching agreements:", error);
     }
-    return(
-        <div>
-            <h1 className="text-5xl font-bold text-white text-center">
-                Welcome to your Dashboard!
-            </h1>
-            <p className="mt-2 text-gray-300 text-center">
-                Let's agree on stuff shall we?
-            </p>
-        </div>
-    )
+    
+    return <DashboardClient agreements={agreements || []} />
 }
