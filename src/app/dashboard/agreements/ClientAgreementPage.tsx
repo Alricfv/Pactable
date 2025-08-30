@@ -162,8 +162,9 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
         setLoading(true)
         setError(null)
 
-        const { data: {session}} = await supabase.auth.getSession();
-        if(!session){
+        const {data: {user}} = await supabase.auth.getUser();
+
+        if(!user){
             setError("Your session has expired, please login again.")
             setLoading(false);
             setTimeout(() => router.push('/signin'), 2000)

@@ -1,35 +1,23 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabaseServer'
 import { redirect } from 'next/navigation'
 import ProfileForm from './ProfileForm'
 
 export default async function ProfilePage(){
-    const cookieStore = cookies()
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                get(name: string){
-                    return cookieStore.get(name)?.value
-                }
-            }
-        }
-    )
+    const supabase = createClient();
 
-    const {
-        data: {session},
-    } = await supabase.auth.getSession()
+    const {data: {user}} = await supabase.auth.getUser()
 
-    if (!session) {
+    if (!user) {
         redirect('/signin')
     }
+
+    const {data: {session}} = await supabase.auth.getSession()
 
     const { data: profile } = await supabase
         .from('profiles')
         .select('username, email, avatar_url')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .single()
     
-    return <ProfileForm session={session} profile={profile} />
+    return <ProfileForm session={session!} profile={profile} />
 }

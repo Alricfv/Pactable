@@ -66,7 +66,7 @@ export default function SignInPage() {
                         >
                             Continue
                         </button>
-                        {error && <div className="text-red-500 text-lg text-center pt-4">{error}</div>}
+                        {error && <div className="text-red-500 text-sm text-center pt-4">{error}</div>}
                     </form>
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { createClient } from '@/lib/supabaseClient'
 import { usePathname, useRouter } from 'next/navigation'
+import { UserCircle } from 'lucide-react';
 
-let authPromise: Promise<any> | null = null;
 
 const publicNavigation = [
   { name: 'Try it Out!', href: '/' },
@@ -25,11 +25,35 @@ const dashboardNavigation = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [profile, setProfile] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const supabase = createClient()
   const router = useRouter()
   const pathname = usePathname()
   const isProtectedRoute = pathname.startsWith('/dashboard')
   const navigation = isProtectedRoute ? dashboardNavigation : publicNavigation
+
+  useEffect(() => {
+    if (isProtectedRoute) {
+      const fetchUserProfile = async () => {
+        setLoading(true)
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', user.id)
+            .single()
+          setProfile(profileData)
+        }
+        setLoading(false)
+      }
+      fetchUserProfile()
+    } else {
+      setLoading(false)
+      setProfile(null)
+    }
+  }, [pathname, isProtectedRoute])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -67,9 +91,45 @@ export function Navbar() {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="/signin" className="text-sm/6 font-semibold text-gray-900 dark:text-white">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          {isProtectedRoute ? (
+            loading ? (
+              <div className="h-10 w-10 bg-gray-700 rounded-full animate-pulse"/>
+            ) : (
+              <div className="relative group">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="User Profile"
+                    className="h-10 w-10 rounded-full object-cover cursor-pointer border-2 border-gray-50 group-hover:border-indigo-500 transition"
+                  />
+                ) : (
+                  <UserCircle className="h-10 w-10 text-gray-400 cursor-pointer group-hover:text-indigo-500 transition" />
+                )}
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#1a1a1a] border border-gray-700 rounded-md shadow-lg py-1 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
+                  <a
+                    href="/dashboard/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    View Profile
+                  </a>
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )
+          ) : (
+            <a
+              href="/signin"
+              className="text-sm/6 font-semibold text-gray-50"
+            >
+              Log In <span aria-hidden="true">&rarr;</span>
+            </a>
+          )}
+
         </div>
       </nav>
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">

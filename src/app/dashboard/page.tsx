@@ -1,22 +1,29 @@
-'use client';
+import { createClient } from '@/lib/supabaseServer';
+import { redirect } from 'next/navigation';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabaseClient';
-
-export default function DashboardPage() {
-    const router = useRouter();
+export default async function DashboardPage() {
     const supabase = createClient();
-    useEffect(() => {
-        const checkAuth = async() => {
-            const {data: {session}} = await supabase.auth.getSession();
-            if (!session){
-                router.push('/');
-            }
-        };
-        checkAuth();
-    }, [router]);
+    const {data: {user}} = await supabase.auth.getUser();
 
+    if(!user){
+        redirect('/signin');
+    }
+
+    const {data: agreements, error} = await supabase
+        .from('agreements')
+        .select(`
+            id,
+            title,
+            created_at,
+            status,
+            agreement_participants!inner(user_id)
+        `)
+        .eq('agreement_participants.user_id', user.id)
+        .order('created_at', {ascending: false});
+    
+    if (error){
+        console.error("Error fetching agreements:", error);
+    }
     return(
         <div>
             <h1 className="text-5xl font-bold text-white text-center">
