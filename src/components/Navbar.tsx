@@ -17,7 +17,7 @@ const publicNavigation = [
 
 const dashboardNavigation = [
   { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Agreements', href: '/dashboard/agreements' },
+  { name: 'Agreements', href: '/dashboard/agreements/create' },
   { name: 'Profile', href: '/dashboard/profile' },
   { name: 'Pricing', href: '/dashboard/pricing' },
 ]

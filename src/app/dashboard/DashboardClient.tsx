@@ -114,17 +114,19 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
 
                 {agreements.length > 0 ? (
                     <div className="space-y-10">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-3xl font-semibold text-white mb-6">
-                                Your Agreements
-                            </h2>
-                            <a
-                                href="/dashboard/agreements"
-                                className="inline-flex items-center gap-2 bg-gray-50 text-gray-950 rounded-md px-4 py-2 font-semibold hover:bg-gray-100 transition text-base"
-                            >
-                                <PlusCircle size={20} />
-                                <span> New Agreement </span>
-                            </a>
+                        <div>
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-3xl font-semibold text-white mb-6">
+                                    Your Agreements
+                                </h2>
+                                <a
+                                    href="/dashboard/agreements/create"
+                                    className="inline-flex items-center gap-2 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
+                                >
+                                    <PlusCircle size={20} />
+                                    <span> New Agreement </span>
+                                </a>
+                            </div>
                             <AgreementGrid agreements={createdAgreements} onDelete={handleOpenModal}/>
                         </div>
                         <div>
@@ -208,7 +210,7 @@ function AgreementGrid({ agreements, onDelete }: { agreements: Agreement[], onDe
                 <div key={agreement.id} className="group relative rounded-xl bg-gradient-to-br from-white/10 via-white/5 to-transparent transition-all duration-300 hover:from-white/20 hover:via-white/10">
                     <div className="relative h-full w-full rounded-[11px] bg-[#09090b] p-3">
                         <a
-                            href={`/dashboard/agreements/${agreement.id}`}
+                            href={`/dashboard/agreements/view/${agreement.id}`}
                             className="block h-40 bg-[#0f0f0f] rounded-lg border-2 border-[#262626] hover:border-gray-500 transition overflow-hidden"
                         >
                             <AgreementPreview title={agreement.title} content={agreement.content}/>

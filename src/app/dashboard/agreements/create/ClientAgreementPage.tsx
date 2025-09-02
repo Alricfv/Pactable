@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabaseClient'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Template, TemplateSection } from './page'
+import type { Template, TemplateSection } from './page.tsx'
 import { DndContext, closestCenter, type DragEndEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
