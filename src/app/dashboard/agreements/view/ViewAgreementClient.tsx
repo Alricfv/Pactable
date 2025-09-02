@@ -1,8 +1,9 @@
 'use client';
 
 import { createClient } from '@/lib/supabaseClient';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, UserCircle } from 'lucide-react';
+import { PDFDocument, StandardFonts, rgb} from 'pdf-lib';
 
 type Profile = {
     username: string | null;
@@ -53,56 +54,62 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     const hasSigned = currentUserParticipant?.status === 'signed';
 
     useEffect(() => {
-    const generatePdf = async () => {
-        if (!agreement.content) return;
+        const generatePdf = async () => {
+            if (!agreement.content) return;
 
-        
-        const sections = agreement.content.split('\n\n\n').map((sectionStr, index) => {
-            const lines = sectionStr.split('\n');
-            const title = lines.find(l => l.startsWith('### '))?.substring(4) || `Section ${index + 1}`;
-            const terms = lines.filter(l => l.startsWith('- ')).map(l => l.substring(2));
-            return { title, terms };
-        });
+            
+            const sections = agreement.content.split('\n\n\n').map((sectionStr, index) => {
+                const lines = sectionStr.split('\n');
+                const title = lines.find(l => l.startsWith('### '))?.substring(4) || `Section ${index + 1}`;
+                const terms = lines.filter(l => l.startsWith('- ')).map(l => l.substring(2));
+                return { title, terms };
+            });
 
-        const pdfDoc = await PDFDocument.create();
-        let page = pdfDoc.addPage();
-        const { width, height } = page.getSize();
-        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-        const margin = 50;
-        const contentWidth = width - (2 * margin);
-        let y = height - margin;
+            const pdfDoc = await PDFDocument.create();
+            let page = pdfDoc.addPage();
+            const { width, height } = page.getSize();
+            const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const margin = 50;
+            const contentWidth = width - (2 * margin);
+            let y = height - margin;
 
-        page.drawText(agreement.title, { x: 50, y, font: boldFont, size: 24, color: rgb(0, 0, 0) });
-        y -= 40;
+            page.drawText(agreement.title, { x: 50, y, font: boldFont, size: 24, color: rgb(0, 0, 0) });
+            y -= 40;
 
-        for (const section of sections) {
-            if (y < 100) {
-                page = pdfDoc.addPage();
-                y = height - margin;
-            }
-            page.drawText(section.title, { x: 50, y, font: boldFont, size: 16, color: rgb(0, 0, 0) });
-            y -= 25;
-
-            for (const term of section.terms) {
-                const fullTerm = `• ${term}`;
-                const wrappedLines = wrapText(fullTerm, font, 11, contentWidth - 10);
-                for (const line of wrappedLines) {
-                    if (y < margin) {
-                        page = pdfDoc.addPage();
-                        y = height - margin;
-                    }
-                    page.drawText(line, { x: margin + (line.startsWith('•') ? 0 : 8), y, font, size: 11, color: rgb(0, 0, 0) });
-                    y -= 20;
+            for (const section of sections) {
+                if (y < 100) {
+                    page = pdfDoc.addPage();
+                    y = height - margin;
                 }
-            }
-            y -= 10;
-        }
+                page.drawText(section.title, { x: 50, y, font: boldFont, size: 16, color: rgb(0, 0, 0) });
+                y -= 25;
 
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        setPdfUrl(url);
+                for (const term of section.terms) {
+                    const fullTerm = `• ${term}`;
+                    const wrappedLines = wrapText(fullTerm, font, 11, contentWidth - 10);
+                    for (const line of wrappedLines) {
+                        if (y < margin) {
+                            page = pdfDoc.addPage();
+                            y = height - margin;
+                        }
+                        page.drawText(line, { x: margin + (line.startsWith('•') ? 0 : 8), y, font, size: 11, color: rgb(0, 0, 0) });
+                        y -= 20;
+                    }
+                }
+                y -= 10;
+            }
+
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            setPdfUrl(`${url}#toolbar=0`);
+
+            return() => URL.revokeObjectURL(url);
+        };
+
+        generatePdf().catch(console.error);
+    }, [agreement.content, agreement.title]);
 
     const handleSignAgreement = async () => {
         if (hasSigned)
@@ -131,17 +138,20 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-            <a 
-                href="/dashboard"
-                className="text-black bg-white mb-6"
-            >
-                &larr; Back to Dashboard
-            </a>
+        <div className="max-w-6xl mx-auto px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
+            <h1 className="text-white font-semibold mb-10 text-5xl text-center">
+                Agreement Review
+            </h1>
             
-            <div className= "grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-[#0f0f0f] p-8 rounded-lg border border-[#262626]">
-                    
+            <div className= "grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div className="lg:col-span-2 h-100% w-100% bg-[#0f0f0f] py-6 px-6 rounded-lg flex items-center justify-center border border-[#262626]">
+                    {pdfUrl ? (
+                        <iframe src={pdfUrl}  className="w-full  aspect-[8.5/11] rounded-lg" style={{ border: 'none'}} title="Agreement PDF Review"/>
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-[#2e2e2e] rounded-lg border border-[#262626]">
+                            <p className="text-gray-400">Agreement preview coming up!</p>
+                        </div>
+                    )}
                 </div>
 
                 <div className="lg:col-span-1">
