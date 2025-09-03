@@ -116,12 +116,12 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                     <div className="space-y-10">
                         <div>
                             <div className="flex justify-between items-center">
-                                <h2 className="text-3xl font-semibold text-white mb-6">
+                                <h2 className="text-3xl font-semibold text-white mb-2">
                                     Your Agreements
                                 </h2>
                                 <a
                                     href="/dashboard/agreements/create"
-                                    className="inline-flex items-center gap-2 mb-6 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
+                                    className="inline-flex items-center gap-2 mb-2 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
                                 >
                                     <PlusCircle size={20} />
                                     <span> New Agreement </span>
@@ -130,7 +130,7 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                             <AgreementGrid agreements={createdAgreements} onDelete={handleOpenModal}/>
                         </div>
                         <div>
-                            <h2 className="text-3xl font-semibold text-white mb-6">
+                            <h2 className="text-3xl font-semibold text-white mb-2">
                                 Received Agreements
                             </h2>
                             <AgreementGrid agreements={receivedAgreements} />

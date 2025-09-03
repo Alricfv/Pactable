@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabaseClient';
 import { useState, useEffect } from 'react';
-import { CheckCircle, Clock, UserCircle } from 'lucide-react';
+import { CheckCircle, Clock, UserCircle, Pencil, Lock } from 'lucide-react';
 import { PDFDocument, StandardFonts, rgb} from 'pdf-lib';
 
 type Profile = {
@@ -22,6 +22,7 @@ type Agreement = {
     title: string;
     content: string | null;
     created_at: string;
+    created_by: string;
     agreement_participants: Participant[];
 };
 
@@ -52,6 +53,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     const supabase = createClient();
     const currentUserParticipant = agreement.agreement_participants.find(p => p.user_id === userId);
     const hasSigned = currentUserParticipant?.status === 'signed';
+    const isCreator = agreement.created_by === userId;
 
     useEffect(() => {
         const generatePdf = async () => {
@@ -171,7 +173,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                         )}
                                         <div>
                                             <p className="font-medium text-white">
-                                                {p.profiles?.username || p.profiles?.email}
+                                                {p.profiles?.username || p.profiles?.email || `User ${p.user_id.substring(0, 8)}`}
                                             </p>
                                             {p.user_id === userId && <p className="text-sm text-gray-400"> (You)</p>}
                                         </div>
@@ -199,6 +201,21 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                         >
                             {loading ? 'Signing...' : hasSigned ? 'Agreement Signed': 'Sign Agreement'}
                         </button>
+                        {isCreator ? (
+                            <a
+                                href={`/dashboard/agreements/edit/${agreement.id}`}
+                                className="w-full px-4 py-3 rounded-md font-semibold text-white transition mt-4 flex items-center justify-center gap-2"
+                                style={{ background: '#2563eb', color: 'white'}}
+                            >
+                                <Pencil size={18} />
+                                Edit Agreement
+                            </a>
+                        ):(
+                            <div className="w-full px-4 py-3 rounded-md font-semibold text-gray-400 bg-gray-800 flex items-center justify-center gap-2 mt-4 cursor-not-allowed">
+                                <Lock size={18} />
+                                You can't make changes to this agreement
+                            </div>
+                        )}
                         {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}
                     </div>
                 </div>
