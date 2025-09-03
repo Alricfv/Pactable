@@ -145,7 +145,7 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                             You haven't created / been added to agreements yet!
                         </p>
                         <a
-                            href="/dashboard/agreements"
+                            href="/dashboard/agreements/create"
                             className="mt-6 inline-flex items-center gap-2 bg-gray-50 text-white rounded-md px-4 py-2 font-semibold hover:bg-gray-100 transition"
                         >
                             <PlusCircle size={18} className="text-gray-950" />

@@ -175,12 +175,15 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
             `### ${section.title}\n\n${section.terms.map(term => `- ${term}`).join('\n')}`
         ).join(`\n\n\n`)
 
-        const validParticipants = participants.filter(email => email.trim() !== '');
+        const creatorEmail = user.email;
+        const otherParticipantEmails = participants.filter(email => email.trim() !== '');
+
+        const allParticipantEmails = [...new Set([creatorEmail, ...otherParticipantEmails])];
 
         const { data, error: rpcError } = await supabase.rpc('create_agreement_with_participants', {
             agreement_title: title,
             agreement_content: finalContent,
-            participant_emails: validParticipants
+            participant_emails: allParticipantEmails
         });
 
         if (rpcError){
@@ -190,7 +193,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
         
         else{
             console.log('Another successful agreement! ID:', data)
-            router.push('/dashboard/agreements')
+            router.push('/dashboard')
         }
         setLoading(false)
     }

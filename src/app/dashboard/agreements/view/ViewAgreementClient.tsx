@@ -101,7 +101,8 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
             }
 
             const pdfBytes = await pdfDoc.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const uint8Array = new Uint8Array(pdfBytes);
+            const blob = new Blob([uint8Array], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             setPdfUrl(`${url}#toolbar=0`);
 
