@@ -173,9 +173,9 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                         )}
                                         <div>
                                             <p className="font-medium text-white">
-                                                {p.profiles?.username || p.profiles?.email || `User ${p.user_id.substring(0, 8)}`}
+                                                {p.profiles?.username || p.profiles?.email}
+                                                {p.user_id === userId && <span className="text-sm text-gray-400 ml-2">(You)</span>}
                                             </p>
-                                            {p.user_id === userId && <p className="text-sm text-gray-400"> (You)</p>}
                                         </div>
                                     </div>
                                     {p.status === 'signed' ? (

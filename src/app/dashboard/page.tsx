@@ -10,7 +10,7 @@ export default async function DashboardPage() {
         redirect('/signin');
     }
 
-    const {data: agreements, error} = await supabase
+    const {data: createdAgreements, error: createdError} = await supabase
         .from('agreements')
         .select(`
             id,
@@ -20,12 +20,30 @@ export default async function DashboardPage() {
             content,
             agreement_participants(user_id, status)
         `)
-        .eq('agreement_participants.user_id', user.id)
+        .eq('created_by', user.id)
         .order('created_at', {ascending: false});
     
-    if (error){
-        console.error("Error fetching agreements:", error);
-    }
+    const {data: receivedAgreements, error} = await supabase
+        .from('agreements')
+        .select(`
+            id,
+            title,
+            created_at,
+            created_by,
+            content,
+            agreement_participants(user_id, status)
+        `)
+        .neq('created_by', user.id)
+        .eq('agreement_participants.user_id', user.id)
+        .order('created_at', {ascending: false});
+
+        if (error){
+            console.error("Error fetching agreements:", error);
+        }
+
+        
+
+        const allAgreements= [...(createdAgreements || []), ...(receivedAgreements || [])]
     
-    return <DashboardClient agreements={agreements || []} userId={user.id} />
+    return <DashboardClient agreements={allAgreements || []} userId={user.id} />
 }
