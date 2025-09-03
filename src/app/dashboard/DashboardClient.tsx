@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabaseClient';
 
 type Participant ={
-    id: string;
+    user_id: string;
     status: string;
 }
 
@@ -121,7 +121,7 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                                 </h2>
                                 <a
                                     href="/dashboard/agreements/create"
-                                    className="inline-flex items-center gap-2 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
+                                    className="inline-flex items-center gap-2 mb-6 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
                                 >
                                     <PlusCircle size={20} />
                                     <span> New Agreement </span>
