@@ -110,7 +110,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
             //ok dunno why typescript is so stubborn on this 
             const blob = new Blob ([pdfBytes as unknown as BlobPart], { type: 'application/pdf'})
             const url = URL.createObjectURL(blob)
-            setPdfUrl(url)
+            setPdfUrl(`${url}#toolbar=0`)
 
             return () => URL.revokeObjectURL(url)
         }
