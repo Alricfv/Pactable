@@ -374,9 +374,9 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         <button
                             type="button"
                             onClick={addParticipant}
-                            className="mt-2 text-lg text-white hover:underline"
+                            className="mt-2 flex items-center text-lg text-white hover:underline"
                         >
-                            <PlusCircle size={14}/> Add Participant
+                            <PlusCircle size={18}/><p className="ml-2">Add Participant</p>
                         </button>
                     </div>
                     <div className="space-y-3">
