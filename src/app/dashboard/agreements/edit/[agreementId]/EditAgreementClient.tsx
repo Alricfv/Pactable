@@ -290,7 +290,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         </p>
                     </div>
                     <p className="text-sm text-amber-200 mt-1">
-                        Editing this agreement will reset all the signature statuses of the participants to "pending". Ask them to sign again!
+                        Editing this agreement will reset all the signature statuses of the participants to &quot;pending&quot;. Ask them to sign again!
                     </p>
                 </div>
 
@@ -346,7 +346,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                             Participants
                         </label>
                         <p className="text-xs text-gray-500 mb-2">
-                            Add the participants' email addresses, They must have an account!
+                            Add the participants&apos; email addresses, They must have an account!
                         </p>
                         <div className="space-y-2">
                             {participants.map((email, index) => (

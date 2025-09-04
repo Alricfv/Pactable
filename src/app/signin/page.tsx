@@ -86,7 +86,7 @@ export default function SignInPage() {
                         Sign in with Google
                     </button>
                     <p className = "text-center text-gray-400 text-sm mt-4">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <a href="/signup" className="text-indigo-400 underline">
                             Sign Up
                         </a>

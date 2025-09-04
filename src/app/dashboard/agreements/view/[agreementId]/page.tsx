@@ -34,7 +34,7 @@ export default async function ViewAgreementPage({ params } : { params: { agreeme
                     Agreement Not Found
                 </h1>
                 <p>
-                    The agreement you are looking for doesn't exist or has been deleted.
+                    The agreement you are looking for doesn&apos;t exist or has been deleted.
                 </p>
                 <a 
                     href="/dashboard" 
@@ -55,7 +55,7 @@ export default async function ViewAgreementPage({ params } : { params: { agreeme
                     Access Denied
                 </h1>
                 <p className="text-gray-400 mt-2">
-                    You don't have permission to view this agreement.
+                    You don&apos;t have permission to view this agreement.
                 </p>
                 <a 
                     href="/dashboard" 

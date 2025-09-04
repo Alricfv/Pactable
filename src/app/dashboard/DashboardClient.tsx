@@ -106,7 +106,7 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                         Welcome to your Dashboard!
                     </h1>
                     <p className="mt-2 text-gray-300">
-                        Let's agree on stuff shall we?
+                        Let&apos;s agree on stuff shall we?
                     </p>
                 </div>
 
@@ -142,7 +142,7 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                             Get on your first agreement ASAP!
                         </h3>
                         <p className="">
-                            You haven't created / been added to agreements yet!
+                            You haven&apos;t created / been added to agreements yet!
                         </p>
                         <a
                             href="/dashboard/agreements/create"
@@ -171,7 +171,7 @@ function ConfirmationModal({isOpen, onCancel, onConfirm, title}:{isOpen: boolean
                     Confirm Deletion 
                 </h3>
                 <p className="text-gray-100 my-4">
-                    Are you sure you want to delete "{title}"? This action is permanent!
+                    Are you sure you want to delete &quot;{title}&quot;? This action is permanent!
                 </p>
                 <div className="flex justify-end gap-4 mt-6">
                     <button

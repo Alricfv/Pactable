@@ -33,7 +33,7 @@ export default async function EditAgreementPage({ params } : { params: { agreeme
                     Agreement Not Found
                 </h1>
                 <p className="text-gray-400 mt-2">
-                    The agreement you are looking for doesn't exist or has been deleted.
+                    The agreement you are looking for doesn&apos;t exist or has been deleted.
                 </p>
                 <a
                     href="/dashboard"
@@ -52,7 +52,7 @@ export default async function EditAgreementPage({ params } : { params: { agreeme
                     Access Denied
                 </h1>
                 <p className="text-gray-400 mt-2">
-                    You don't have permission to edit this agreement.
+                    You don&apos;t have permission to edit this agreement.
                 </p>
                 <a
                     href="/dashboard"

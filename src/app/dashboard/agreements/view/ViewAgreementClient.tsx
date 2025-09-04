@@ -213,7 +213,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                         ):(
                             <div className="w-full px-4 py-3 rounded-md font-semibold text-gray-400 bg-gray-800 flex items-center justify-center gap-2 mt-4 cursor-not-allowed">
                                 <Lock size={18} />
-                                You can't make changes to this agreement
+                                You can&apos;t make changes to this agreement
                             </div>
                         )}
                         {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}
