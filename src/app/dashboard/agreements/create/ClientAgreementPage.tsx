@@ -24,7 +24,7 @@ export default function CreateAgreementPage({templates}: {templates: Template[]}
                 <p className="mt-2 text-gray-400 text-center">
                     Select a base template for your agreement!
                 </p>
-                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 px-6">
                     {templates.map((template) =>(
                         <button
                             key={template.id}
