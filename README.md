@@ -10,3 +10,6 @@ Anyone can draft clear agreements, invite participants and even sign it online a
 - Improve the flexibility in each contract
 - Add more templates
 - More styling options 
+
+## Deployment
+-Hosted on Vercel
