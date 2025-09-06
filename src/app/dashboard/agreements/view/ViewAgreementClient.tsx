@@ -75,6 +75,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
             const { width, height } = page.getSize();
             const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
             const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const italicFont = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
             const margin = 50;
             const contentWidth = width - (2 * margin);
             let y = height - margin;
@@ -125,24 +126,48 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                 p.status === 'signed' && p.signature_text
             );
 
+            const isCurrentlySigning = !hasSigned && signatureName.trim() !== '';
+
+            
             if (signedParticipants.length > 0) {
                 if (y < 150) {
                     page = pdfDoc.addPage();
                     y = height - margin;
                 }
 
-                y -= 50;
+                else {
+                    y -= 50;
+                }
+
+                page.drawText("Signatures", {
+                    x: (width - boldFont.widthOfTextAtSize("Signatures", 20)) / 2,
+                    y: y+20,
+                    font: boldFont,
+                    size: 20,
+                    color: rgb(0,0,0)
+                });
+            
+                
 
                 page.drawLine({
-                    start: { x: margin, y: y + 60},
-                    end: {x: width - margin, y: y + 60 },
+                    start: { x: margin, y: y},
+                    end: {x: width - margin, y: y },
                     thickness: 2,
                     color: rgb(0,0,0)
                 })
 
+                y -= 50;
+
                 for (const participant of signedParticipants){
+                    if(y < margin + 50){
+                        page = pdfDoc.addPage();
+                        y = height - margin;
+                    }
+
+                    const pageCenter = width / 2
+
                     page.drawText("Signature",{
-                        x:margin,
+                        x:pageCenter - 200,
                         y: y + 30,
                         font: boldFont,
                         size: 14,
@@ -150,14 +175,14 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     });
 
                     page.drawLine({
-                        start: { x: margin, y: y },
-                        end: { x: margin + 200, y: y },
+                        start: { x: pageCenter - 200, y: y },
+                        end: { x: pageCenter -40, y: y },
                         thickness: 1,
                         color: rgb(0.5, 0.5, 0.5),
                     });
 
                     page.drawText(participant.signature_text!, {
-                        x: margin + 20,
+                        x: pageCenter - 180,
                         y: y + 5,
                         font: font,
                         size: 16,
@@ -165,7 +190,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     });
 
                     page.drawText("Date:", { 
-                        x: margin + 250, 
+                        x: pageCenter + 60, 
                         y: y + 30, 
                         font: boldFont, 
                         size: 14, 
@@ -173,8 +198,8 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     });
 
                     page.drawLine({
-                        start: { x: margin + 250, y: y },
-                        end: { x: margin + 400, y: y },
+                        start: { x: pageCenter + 60, y: y },
+                        end: { x: pageCenter + 210, y: y },
                         thickness: 1,
                         color: rgb(0.5, 0.5, 0.5),
                     });
@@ -182,13 +207,45 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     if (participant.signed_date) {
                         const signedDate = new Date(participant.signed_date).toLocaleDateString();
                         page.drawText(signedDate, {
-                            x: margin + 270,
+                            x: pageCenter + 80,
                             y: y + 5,
                             font: font,
                             size: 14,
                             color: rgb(0,0,0)
                         })
                     }
+
+                    y-=80
+                }
+
+                if (isCurrentlySigning) {
+                    if (y < margin + 50) {
+                        page = pdfDoc.addPage();
+                        y = height - margin;
+                    }
+                
+                    page.drawText("Signature", {
+                        x: margin,
+                        y: y + 30,
+                        font: boldFont,
+                        size: 14,
+                        color: rgb(0,0,0)
+                    });
+                    
+                    page.drawLine({
+                        start: { x: margin, y: y },
+                        end: { x: margin + 200, y: y },
+                        thickness: 1,
+                        color: rgb(0.5, 0.5, 0.5),
+                    });
+                    
+                    page.drawText(signatureName, {
+                        x: margin + 20,
+                        y: y + 5,
+                        font: italicFont,
+                        size: 16,
+                        color: rgb(0, 0, 0),
+                    });
                 }
             }
 
@@ -202,104 +259,9 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
         };
 
         generatePdf().catch(console.error);
-    }, [agreement.content, agreement.title]);
+    }, [agreement.content, agreement.title, agreement.agreement_participants, hasSigned, signatureName]);
 
-    const addSignatureToPdf = async (signature: string) => {
-        if(!pdfUrl)
-            return null;
-
-        try{
-            const response = await fetch(pdfUrl.replace('#toolbar=0',''));
-            const existingPdfBytes = await response.arrayBuffer();
-            const pdfDoc = await PDFDocument.load(existingPdfBytes);
-            const pages = pdfDoc.getPages();
-            const lastPage = pages[pages.length -1];
-            const {width, height} = lastPage.getSize();
-            const font = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
-            const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-            const margin = 50;
-
-            const sigPage = pdfDoc.addPage();
-            const sigPageSize = sigPage.getSize();
-            let y = sigPageSize.height - margin
-            y-=120;
-
-            sigPage.drawLine({
-                start: { x: margin, y: y - 10},
-                end: {x: sigPageSize.width - margin, y: y - 10 },
-                thickness: 2,
-                color: rgb(0,0,0)
-            });
-
-            lastPage.drawText("Signatures", { 
-                x: (sigPageSize.width - boldFont.widthOfTextAtSize("Signatures", 20)) / 2, 
-                y: y + 70, 
-                font: boldFont,
-                size: 20,
-                color: rgb(0,0,0) 
-            });
-
-            y -= 80
-
-            sigPage.drawText("Signature", { 
-                x: margin, 
-                y: y + 30, 
-                font: boldFont,
-                size: 14,
-                color: rgb(0,0,0) 
-            });
-    
-            
-            sigPage.drawLine({
-                start: { x: margin, y: y },
-                end: { x: margin + 200, y: y },
-                thickness: 1,
-                color: rgb(0.5, 0.5, 0.5),
-            });
-
-            sigPage.drawText(signature, {
-                x: margin + 20,
-                y: y + 5,
-                font: font,
-                size: 16,
-                color: rgb(0, 0, 0),
-            });
-
-            sigPage.drawText("Date:", { 
-                x: margin + 250, 
-                y: y + 30, 
-                font: boldFont, 
-                size: 14, 
-                color: rgb(0,0,0) 
-            });
-
-            sigPage.drawLine({
-                start: { x: margin + 250, y: y },
-                end: { x: margin + 400, y: y },
-                thickness: 1,
-                color: rgb(0.5, 0.5, 0.5),
-            });
-
-            const currentDate = new Date().toLocaleDateString();
-            sigPage.drawText(currentDate, {
-                x: margin + 270,
-                y: y + 5,
-                font: font,
-                size: 14,
-                color: rgb(0,0,0)
-            })
-
-            const pdfBytes = await pdfDoc.save();
-            const uint8Array = new Uint8Array(pdfBytes);
-            const blob = new Blob([uint8Array], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-
-            return `${url}#toolbar=0`;
-        }
-        catch (error){
-            return null;
-        }
-    }
+   
 
     const handleSignAgreement = async () => {
         if (hasSigned)
@@ -313,11 +275,6 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
         setError(null);
 
         try{
-            const signedPdfUrl = await addSignatureToPdf(signatureName)
-            if (signedPdfUrl){
-                setPdfUrl(signedPdfUrl);
-            }
-
             const { error: updateError } = await supabase
                 .from('agreement_participants')
                 .update({ 
@@ -333,7 +290,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
             }
 
             const updatedParticipants = agreement.agreement_participants.map(p =>
-                p.user_id === userId ? {...p, status: 'signed' as const } : p
+                p.user_id === userId ? {...p, status: 'signed' as const, signature_text: signatureName, signed_date: new Date().toISOString() } : p
             );
             setAgreement({ ...agreement, agreement_participants: updatedParticipants });
         }
@@ -344,13 +301,6 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
             setLoading(false);
         }
     };
-       
-
-
-
-        
-
-    
 
     return (
         <div className="max-w-6xl mx-auto px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">

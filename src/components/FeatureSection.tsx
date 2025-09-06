@@ -2,19 +2,19 @@ import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/react/2
 
 const features = [
   {
-    name: 'Push to deploy.',
+    name: 'Speedrun your agreements!',
     description:
-      'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
+      'Bunch of scenarios and subjects to choose from with more coming to aid you.',
     icon: CloudArrowUpIcon,
   },
   {
-    name: 'SSL certificates.',
-    description: 'Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.',
+    name: 'Let them know YOUR terms.',
+    description: 'Just invite people through their emails, get them to sign it!',
     icon: LockClosedIcon,
   },
   {
-    name: 'Database backups.',
-    description: 'Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.',
+    name: 'Uh-oh, You agreed to it? Deal with it.',
+    description: 'Their e-signature will be on record as long as you do not change the agreement',
     icon: ServerIcon,
   },
 ]
