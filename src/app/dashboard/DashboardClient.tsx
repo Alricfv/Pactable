@@ -27,13 +27,13 @@ const AgreementPreview = ({ title, content }: {title: string, content: string | 
 
     return (
         <div className="w-full h-full bg-white p-3 overflow-hidden text-black font-sans text-[4px] leading-tight">
-            <h1 className="font-bold text-[6px] mb-2 truncate">
+            <h1 className="font-bold text-[6px] mb-2 truncate text-center">
                 {title}
             </h1>
             {lines.slice(0,20).map((line, index) => {
                 if (line.startsWith('### ')){
                     return (
-                    <p key={index} className="font-bold mt-2 mb-1 text-[5px] truncate">
+                    <p key={index} className="font-bold mt-2 mb-1 text-[5px] border-b truncate">
                         {line.substring(4)}
                     </p>  
                 )}

@@ -108,8 +108,14 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
             const contentWidth = width - (2 * margin);
             let y = height - margin;
 
-            page.drawText(title, { x:50, y, font: boldFont, size: 24, color: rgb(0,0,0) });
-            y -= 40;
+            const maxTitleWidth = width - 2 * margin;
+            const titleLines = wrapText(title, boldFont, 30, maxTitleWidth);
+            for (const line of titleLines){
+                const lineWidth = boldFont.widthOfTextAtSize(line, 30);
+                const centerX = (width - lineWidth) / 2;
+                page.drawText(line, {x: centerX, y, font: boldFont, size: 30, color: rgb(0,0,0) });
+                y -= 40;
+            }
 
             for (const section of sections) {
                 if (y < 100) {
@@ -118,6 +124,16 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                 }
 
                 page.drawText(section.title, {x: 50, y, font: boldFont, size: 16, color: rgb(0,0,0) });
+                
+                const titleWidth = boldFont.widthOfTextAtSize(section.title, 16);
+                const underlineY = y - 3;
+                page.drawLine({
+                    start: { x: 50, y: underlineY },
+                    end: { x: 50 + titleWidth, y: underlineY },
+                    thickness: 1,
+                    color: rgb(0,0,0)
+                })
+                
                 y -= 25;
 
                 for (const term of section.terms){

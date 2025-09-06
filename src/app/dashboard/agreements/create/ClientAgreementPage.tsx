@@ -59,6 +59,7 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [pdfUrl, setPdfUrl] = useState<string>('')
+    const [signatureName, setSignatureName] = useState('');
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -72,12 +73,19 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
             const { width, height } = page.getSize()
             const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
             const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+            const italicFont = await pdfDoc.embedFont(StandardFonts.HelveticaOblique)
             const margin = 50;
             const contentWidth = width - (2 * margin);
             let y = height - margin;
 
-            page.drawText(title, { x:50, y, font: boldFont, size: 24, color: rgb(0, 0, 0)})
-            y -= 40
+            const maxTitleWidth = width - 2 * margin;
+            const titleLines = wrapText(title, boldFont, 30, maxTitleWidth);
+            for (const line of titleLines){
+                const lineWidth = boldFont.widthOfTextAtSize(line, 30);
+                const centerX = (width - lineWidth) / 2;
+                page.drawText(line, {x: centerX, y, font: boldFont, size: 30, color: rgb(0,0,0) });
+                y -= 40;
+            }
 
             for (const section of sections){
                 if (y<100){
@@ -86,6 +94,16 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                 }
                 
                 page.drawText(section.title, { x:50, y, font: boldFont, size: 16, color: rgb(0, 0, 0)})
+
+                const titleWidth = boldFont.widthOfTextAtSize(section.title, 16);
+                const underlineY = y - 3;
+                page.drawLine({
+                    start: { x: 50, y: underlineY },
+                    end: { x: 50 + titleWidth, y: underlineY },
+                    thickness: 1,
+                    color: rgb(0,0,0)
+                })
+
                 y -= 25
 
                 for (const term of section.terms){
@@ -101,9 +119,10 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                     page.drawText(line, { x: margin + (line.startsWith('•') ? 0 : 8), y, font, size: 11, color: rgb(0, 0, 0)});
                     y -= 20
                     }
-                    
-                }
-                y -= 10;
+
+            
+            }
+            y -= 10;
             }
 
             const pdfBytes = await pdfDoc.save()
