@@ -21,8 +21,16 @@ export default function Home() {
               Try it Out!
             </Button>
           </Link>
-          <Button className ="h-18 rounded-md px-12 text-xl font-bold" variant = "outline" >
-            Learn more
+          <Button
+            onClick={() => {
+              document.getElementById('features')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+            className ="h-18 rounded-md px-12 text-xl font-bold" 
+            variant = "outline" 
+          >
+            <a href="#features">Learn More</a>
           </Button>
         </div>
       </main>
