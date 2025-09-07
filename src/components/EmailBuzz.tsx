@@ -64,18 +64,18 @@ export function EmailBuzz() {
               <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10">
                 <CalendarDaysIcon aria-hidden="true" className="size-6 text-white" />
               </div>
-              <dt className="mt-4 text-base font-semibold text-white">Weekly articles</dt>
+              <dt className="mt-4 text-base font-semibold text-white">Weekly Changes</dt>
               <dd className="mt-2 text-base/7 text-gray-400">
-                Non laboris consequat cupidatat laborum magna. Eiusmod non irure cupidatat duis commodo amet.
+                Will send the latest changes to Pactable, so you&apos;ll always be in the loop.
               </dd>
             </div>
             <div className="flex flex-col items-start">
               <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10">
                 <HandRaisedIcon aria-hidden="true" className="size-6 text-white" />
               </div>
-              <dt className="mt-4 text-base font-semibold text-white">No spam</dt>
+              <dt className="mt-4 text-base font-semibold text-white">Stop</dt>
               <dd className="mt-2 text-base/7 text-gray-400">
-                Officia excepteur ullamco ut sint duis proident non adipisicing. Voluptate incididunt anim.
+                You can unsubscribe at any time yippee
               </dd>
             </div>
           </dl>
