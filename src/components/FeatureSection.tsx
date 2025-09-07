@@ -13,26 +13,25 @@ const features = [
     icon: LockClosedIcon,
   },
   {
-    name: 'Uh-oh, You agreed to it? Deal with it.',
-    description: 'Their e-signature will be on record as long as you do not change the agreement',
+    name: 'No take-backs! Tell them to deal with it.',
+    description: 'Their e-signature will be on record as long as you do not change the agreement.',
     icon: ServerIcon,
   },
 ]
 
 export function FeatureSection() {
   return (
-    <div className="overflow-hidden py-24 sm:py-32">
+    <div className="overflow-hidden py-12 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           <div className="lg:pt-4 lg:pr-8">
             <div className="lg:max-w-lg">
-              <h2 className="text-base font-semibold text-indigo-400">Deploy faster</h2>
+              <h2 className="text-base font-semibold text-indigo-400">Automated & Quick Agreements!</h2>
               <p className="mt-2 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-                A better workflow
+                All-in-one tool for Handshake Agreements!
               </p>
               <p className="mt-6 text-lg text-gray-300">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque,
-                iste dolor cupiditate blanditiis ratione.
+                Create, sign, and manage agreements effortlessly with Pactable. Whether you're sealing a deal, setting terms or safeguarding yourselves, we've got you covered.
               </p>
               <dl className="mt-10 max-w-xl space-y-8 text-base text-gray-400 lg:max-w-none">
                 {features.map((feature) => (
@@ -49,10 +48,10 @@ export function FeatureSection() {
           </div>
           <img
             alt="Product screenshot"
-            src="https://tailwindcss.com/plus-assets/img/component-images/dark-project-app-screenshot.png"
+            src="https://raw.githubusercontent.com/Alricfv/imageassets/refs/heads/main/Screenshot%202025-09-07%20201813.png"
             width={800}
             height={600}
-            className="w-3xl max-w-none rounded-xl shadow-xl ring-1 ring-white/10 sm:w-228 md:-ml-4 lg:-ml-0"
+            className="w-3xl max-w-none rounded-xl shadow-xl ring-1 ring-white/10 sm:w-228 md:-ml-4 lg:-ml-0 mt-20"
           />
         </div>
       </div>
