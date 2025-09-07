@@ -8,12 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { UserCircle } from 'lucide-react';
 
 
-const publicNavigation = [
-  { name: 'Try it Out!', href: '/' },
-  { name: 'Features', href: '/' },
-  { name: 'About', href: '/' },
-  { name: 'Contact', href: '/' },
-]
+
 
 const dashboardNavigation = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -31,7 +26,7 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const isProtectedRoute = pathname.startsWith('/dashboard')
-  const navigation = isProtectedRoute ? dashboardNavigation : publicNavigation
+  const navigation =  dashboardNavigation
 
   useEffect(() => {
     if (isProtectedRoute) {
@@ -79,17 +74,19 @@ export function Navbar() {
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12">
-          {navigation.map((item) => (
-            <a 
-              key={item.name} 
-              href={item.href} 
-              className="text-sm/6 font-semibold text-gray-900 dark:text-white"
-            >
-              {item.name}
-            </a>
-          ))}
-        </div>
+        {isProtectedRoute && (
+          <div className="hidden lg:flex lg:gap-x-12">
+            {navigation.map((item) => (
+              <a 
+                key={item.name} 
+                href={item.href} 
+                className="text-sm/6 font-semibold text-gray-900 dark:text-white"
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        )}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isProtectedRoute ? (
             loading ? (
