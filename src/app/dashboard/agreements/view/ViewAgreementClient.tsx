@@ -327,6 +327,22 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                             Participants
                         </h2>
                         <div className="space-y-4 mb-8">
+                            {isCreator ? (
+                                <div key="creator" className="flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <UserCircle className="h-10 w-10 text-indigo-500"/>
+                                        <div>
+                                            <p className="font-medium text-white">
+                                                {agreement.created_by === userId ? 'You (Owner)' : 'Owner'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-indigo-400">
+                                        <span>Creator</span>
+                                    </div>
+                                </div>
+                                ):null
+                            }
                             {agreement.agreement_participants.map(p => (
                                 <div key={p.user_id} className="flex justify-between items-center">
                                     <div className="flex items-center gap-3">
