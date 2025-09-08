@@ -146,6 +146,9 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                 p.status === 'signed' && p.signature_text
             );
 
+            
+
+
             const isCurrentlySigning = !hasSigned && signatureName.trim() !== '';
 
             
