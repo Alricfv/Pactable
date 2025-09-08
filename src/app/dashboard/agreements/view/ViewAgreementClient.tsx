@@ -339,8 +339,6 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     )}
                 </div>
 
-                
-
                 <div className="lg:col-span-1">
                     <div className="sticky top-24 bg-[#0f0f0f] p-6 rounded-lg border border-[#262626]">
                         <h2 className="text-2xl font-semibold text-white mb-6">
@@ -352,7 +350,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                     <UserCircle className="h-10 w-10 text-indigo-500"/>
                                     <div>
                                         <p className="font-medium text-white">
-                                            {agreement.created_by === userId ? 'You' : (creatorProfile?.username || creatorProfile?.email || 'Owner')}
+                                            {creatorProfile?.username || creatorProfile?.email || 'Owner'}
                                             {agreement.created_by === userId && <span className="text-sm text-gray-400 ml-2">(Owner)</span>}
                                         </p>
                                     </div>
