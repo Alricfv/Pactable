@@ -57,6 +57,26 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     const currentUserParticipant = agreement.agreement_participants.find(p => p.user_id === userId);
     const hasSigned = currentUserParticipant?.status === 'signed';
     const isCreator = agreement.created_by === userId;
+    const [creatorProfile, setCreatorProfile] = useState<Profile | null>(null);
+
+    useEffect(() =>{
+        const fetchCreatorProfile = async() => {
+            if (!agreement.created_by)
+                return;
+
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('username, email, avatar_url')
+                .eq('id', agreement.created_by)
+                .single();
+                
+            if (data && !error) {
+                setCreatorProfile(data);
+            }
+        };
+
+        fetchCreatorProfile()
+    }, [agreement.created_by, supabase])
 
     useEffect(() => {
         const generatePdf = async () => {
@@ -327,22 +347,20 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                             Participants
                         </h2>
                         <div className="space-y-4 mb-8">
-                            {isCreator ? (
-                                <div key="creator" className="flex justify-between items-center">
-                                    <div className="flex items-center gap-3">
-                                        <UserCircle className="h-10 w-10 text-indigo-500"/>
-                                        <div>
-                                            <p className="font-medium text-white">
-                                                {agreement.created_by === userId ? 'You (Owner)' : 'Owner'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-indigo-400">
-                                        <span>Creator</span>
+                            <div key="creator" className="flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <UserCircle className="h-10 w-10 text-indigo-500"/>
+                                    <div>
+                                        <p className="font-medium text-white">
+                                            {agreement.created_by === userId ? 'You' : (creatorProfile?.username || creatorProfile?.email || 'Owner')}
+                                            {agreement.created_by === userId && <span className="text-sm text-gray-400 ml-2">(Owner)</span>}
+                                        </p>
                                     </div>
                                 </div>
-                                ):null
-                            }
+                                <div className="flex items-center gap-2 text-indigo-400">
+                                    <span>Creator</span>
+                                </div>
+                            </div>
                             {agreement.agreement_participants.map(p => (
                                 <div key={p.user_id} className="flex justify-between items-center">
                                     <div className="flex items-center gap-3">
