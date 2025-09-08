@@ -77,5 +77,113 @@
         ]
       }
     ]
+  },
+  {
+    "id": "freelance_project",
+    "title": "Freelance Project Agreement",
+    "description": "A simple contract for freelancers and clients to outline deliverables, payment, and timelines.",
+    "sections": [
+      {
+        "id": "scope",
+        "title": "Scope of Work",
+        "terms": [
+          "The freelancer will deliver the agreed-upon services as described in the project brief.",
+          "Any changes to the scope must be agreed upon in writing."
+        ]
+      },
+      {
+        "id": "payment",
+        "title": "Payment Terms",
+        "terms": [
+          "Payment will be made upon completion of milestones or the entire project, as agreed.",
+          "Late payments may incur a fee of 5% per week overdue."
+        ]
+      },
+      {
+        "id": "timeline",
+        "title": "Timeline",
+        "terms": [
+          "The project will begin on the agreed start date and is expected to be completed by the agreed deadline.",
+          "Delays must be communicated as soon as possible."
+        ]
+      },
+      {
+        "id": "confidentiality",
+        "title": "Confidentiality",
+        "terms": [
+          "Both parties agree to keep all project information confidential."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "group_project",
+    "title": "Student Group Project Agreement",
+    "description": "An agreement for students working together on a group project to clarify roles and expectations.",
+    "sections": [
+      {
+        "id": "roles",
+        "title": "Roles & Responsibilities",
+        "terms": [
+          "Each member will be assigned specific tasks and deadlines.",
+          "All members agree to communicate regularly and attend group meetings."
+        ]
+      },
+      {
+        "id": "contributions",
+        "title": "Contributions",
+        "terms": [
+          "All members are expected to contribute equally to the project.",
+          "If a member is unable to contribute, they must inform the group in advance."
+        ]
+      },
+      {
+        "id": "conflict",
+        "title": "Conflict Resolution",
+        "terms": [
+          "Disagreements will be resolved through group discussion.",
+          "If unresolved, the issue will be brought to the instructor."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "loaning_items",
+    "title": "Loaning Personal Items Agreement",
+    "description": "A simple agreement for lending and borrowing personal items between individuals.",
+    "sections": [
+      {
+        "id": "item_details",
+        "title": "Item Details",
+        "terms": [
+          "The lender agrees to loan the following item(s): [describe item(s) in detail].",
+          "The borrower acknowledges receipt of the item(s) in good condition."
+        ]
+      },
+      {
+        "id": "loan_period",
+        "title": "Loan Period",
+        "terms": [
+          "The loan period will begin on the agreed start date and end on the agreed return date.",
+          "Extensions must be requested and approved by the lender."
+        ]
+      },
+      {
+        "id": "care_and_use",
+        "title": "Care & Use",
+        "terms": [
+          "The borrower agrees to use the item(s) responsibly and only for their intended purpose.",
+          "Any damage or loss must be reported to the lender immediately."
+        ]
+      },
+      {
+        "id": "return",
+        "title": "Return of Item(s)",
+        "terms": [
+          "The borrower will return the item(s) in the same condition as received, except for normal wear and tear.",
+          "If the item(s) are lost or damaged, the borrower agrees to repair or replace them as agreed with the lender."
+        ]
+      }
+    ]
   }
 ]
