@@ -15,6 +15,7 @@ export default function ProfileForm({session,profile} : {session: Session, profi
     const supabase = createClient()
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const [saveSuccess, setSaveSuccess] = useState(false)
     const [username, setUsername] = useState(profile?.username || '')
     const [avatarUrl, setAvatarUrl] =useState<string | null>(profile?.avatar_url || null)
     const [message, setMessage] = useState<{ text: String, type: 'success' | 'error' } | null>(null)
@@ -87,6 +88,7 @@ export default function ProfileForm({session,profile} : {session: Session, profi
     async function updateProfile(){
         setLoading(true)
         setMessage(null)
+        setSaveSuccess(false)
 
         try {
             const { error } = await supabase
@@ -101,7 +103,12 @@ export default function ProfileForm({session,profile} : {session: Session, profi
             if (error) 
                 throw error
 
-            setMessage({ text: 'Profile updated successfully!', type: 'success'})
+            setSaveSuccess(true)
+
+            setTimeout(() => {
+                setSaveSuccess(false)
+            },3000);
+            
             router.refresh()
         }
         catch (error:any){
@@ -197,10 +204,10 @@ export default function ProfileForm({session,profile} : {session: Session, profi
                 <div className="space-y-3">
                     <button
                         onClick={updateProfile}
-                        className="w-full bg-indigo-500 text-gray-50 rounded-md px-4 py-3 font-semibold hover:bg-indigo-600 disabled:bg-indigo-400"
+                        className={`w-full ${saveSuccess ? 'bg-green-500 hover:bg-green-600' : 'bg-indigo-500 hover:bg-indigo-600'} text-gray-50 rounded-md px-4 py-3 font-semibold transition-colors disabled:bg-indigo-400`}
                         disabled={loading}
                     >
-                        {loading ? 'Saving...' : 'Update Profile'}
+                        {loading ? 'Saving...' : (saveSuccess ? 'Saved Successfully!' :'Update Profile')}
                     </button>
                     <button
                         onClick={handleSignOut}
@@ -215,10 +222,8 @@ export default function ProfileForm({session,profile} : {session: Session, profi
                     }`}>
                         {message.text}
                     </div>
-                )}
-                
+                )}  
             </div>
-
         </div>
     )
 }

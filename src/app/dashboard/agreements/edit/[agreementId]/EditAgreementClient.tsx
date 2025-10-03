@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabaseClient';
 import { DndContext, closestCenter, type DragEndEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -68,6 +68,32 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
     const [loading, setLoading] = useState(false);
     const [pdfUrl, setPdfUrl] = useState<string>('');
     const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor));
+    const [logoFile, setLogoFile] = useState<File | null>(null);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+    const [logoPosition, setLogoPosition] = useState<'top-left' | 'top-right' | 'above-title'>('top-right');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setLogoFile(file);
+            const objectUrl = URL.createObjectURL(file);
+            setLogoUrl(objectUrl);
+            return () => URL.revokeObjectURL(objectUrl);
+        }
+    };
+    
+    const handleLogoClick = () => {
+        fileInputRef.current?.click();
+    };
+    
+    const removeLogo = () => {
+        setLogoFile(null);
+        setLogoUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     useEffect(() => {
         if (agreement.content) {
@@ -107,6 +133,50 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
             const margin = 50;
             const contentWidth = width - (2 * margin);
             let y = height - margin;
+
+            if (logoUrl) {
+                try{
+                    const logoBytes = await fetch(logoUrl).then(res => res.arrayBuffer());
+                    let logoImage;
+
+                    if (logoFile?.type.includes('png')){
+                        logoImage = await pdfDoc.embedPng(logoBytes);
+                    }
+
+                    else {
+                        logoImage = await pdfDoc.embedJpg(logoBytes);
+                    }
+
+                    const logoWidth = 100;
+                    const logoHeight = logoWidth / (logoImage.width / logoImage.height);
+
+                    let logoX, logoY;
+                    switch (logoPosition) {
+                        case 'top-left':
+                            logoX = margin;
+                            logoY = height - margin - logoHeight;
+                            break;
+                        case 'top-right':
+                            logoX = width - margin - logoWidth;
+                            logoY = height - margin - logoHeight;
+                            break;
+                        case 'above-title':
+                            logoX = (width - logoWidth) / 2;
+                            logoY = height - margin - logoHeight;
+                            y = logoY - 30; 
+                            break;
+                    }
+
+                    page.drawImage(logoImage, {
+                        x: logoX,
+                        y: logoY,
+                        width: logoWidth,
+                        height: logoHeight
+                    });
+                } catch (err) {
+                    console.error('Error embedding logo:', err);
+                }
+            }
 
             const maxTitleWidth = width - 2 * margin;
             const titleLines = wrapText(title, boldFont, 30, maxTitleWidth);
@@ -162,7 +232,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
         if (sections.length > 0) {
             generatePdf().catch(console.error);
         }
-    }, [title, sections]);
+    }, [title, sections, logoUrl, logoPosition]);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over } = event
@@ -356,6 +426,75 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         >
                             <PlusCircle size={16}/> Add Section
                         </button>
+                    </div>
+                    <div className="space-y-3">
+                        <label className="block text-sm font-medium text-gray-300">
+                            Company Logo (Optional)
+                        </label>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleLogoChange}
+                            accept="image/png,image/jpeg,image/jpg"
+                            className="hidden"
+                        />
+                        
+                        {logoUrl ? (
+                            <div className="relative w-40 h-24 mb-4 bg-white rounded-md p-2 flex items-center justify-center">
+                                <img 
+                                    src={logoUrl} 
+                                    alt="Company Logo" 
+                                    className="max-w-full max-h-full object-contain" 
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={removeLogo}
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleLogoClick}
+                                className="flex items-center gap-2 bg-[#1a1a1a] border border-[#262626] text-gray-300 px-4 py-2 rounded-md hover:border-gray-500"
+                            >
+                                <PlusCircle size={16} />
+                                Upload Logo
+                            </button>
+                        )}
+                        
+                        {logoUrl && (
+                            <div className="mt-3">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Logo Position
+                                </label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setLogoPosition('top-left')}
+                                        className={`p-2 border rounded-md ${logoPosition === 'top-left' ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700'}`}
+                                    >
+                                        Top Left
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setLogoPosition('top-right')}
+                                        className={`p-2 border rounded-md ${logoPosition === 'top-right' ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700'}`}
+                                    >
+                                        Top Right
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setLogoPosition('above-title')}
+                                        className={`p-2 border rounded-md ${logoPosition === 'above-title' ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700'}`}
+                                    >
+                                        Above Title
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-300">
