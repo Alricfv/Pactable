@@ -7,9 +7,6 @@ import { createClient } from '@/lib/supabaseClient'
 import { usePathname, useRouter } from 'next/navigation'
 import { UserCircle } from 'lucide-react';
 
-
-
-
 const dashboardNavigation = [
   { name: 'Dashboard', href: '/dashboard' },
   { name: 'Agreements', href: '/dashboard/agreements/create' },
@@ -56,8 +53,8 @@ export function Navbar() {
   }
 
   return (
-    <header className="absolute inset-x-0 top-0 z-50">
-      <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
+    <header className="fixed inset-x-0 top-4 z-50 mx-auto max-w-10xl px-4">
+      <nav aria-label="Global" className="flex items-center justify-between p-4 lg:px-8 bg-[#1a1a1a]/10 backdrop-blur-lg rounded-xl border border-[#262626] shadow-lg">
         <div className="flex lg:flex-1">
           <a href={isProtectedRoute ? "/dashboard" : "/"} className="-m-1.5 p-1.5">
             <span className="sr-only">Pactable</span>
