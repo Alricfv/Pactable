@@ -48,10 +48,6 @@ export default function CreateAgreementPage({templates}: {templates: Template[]}
     return <AgreementForm template={selectedTemplate} onBack={() => setSelectedTemplate(null)} />    
 }
 
-
-
-
-
 function AgreementForm({template, onBack}: {template: Template; onBack: () => void}) {
 
     const supabase = createClient()
@@ -509,33 +505,42 @@ function SortableSection({ section, onUpdate, onDelete }: { section: any, onUpda
     <div 
         ref={setNodeRef} 
         style={style} 
-        className="flex items-start gap-3 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626] transition hover:scale-[1.02] hover:shadow-[0_0_16px_2px_rgba(255,255,255,0.32)]"
+        className="relative flex items-start gap-3 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626] transition hover:scale-[1.02] hover:shadow-[0_0_16px_2px_rgba(255,255,255,0.32)]"
     >
-      <button 
-        type="button" {...attributes} {...listeners} 
-        className="cursor-grab text-gray-500 hover:text-white pt-1"
-      >
-        <GripVertical size={20} />
-      </button>
-      <div className="flex-grow">
-        <h3 className="font-semibold text-white">{section.title}</h3>
-      </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <button 
-            type="button" 
-            onClick={() => setIsEditing(true)} 
-            className="flex items-center gap-1 px-2 py-1 rounded bg-indigo-700 text-gray-50 hover:text-white"
-        >
-            <span>Edit</span> <Pencil size={16} />
-        </button>
-        <button 
-            type="button" 
-            onClick={() => onDelete(section.id)} 
-            className="w-7 h-7 flex items-center text-gray-950 justify-center rounded-md bg-red-200 hover:bg-red-600"
-        >
-            <Trash2 size={16} />
-        </button>
-      </div>
+        
+        <div className="flex items-start gap-3">
+            <button 
+                type="button" {...attributes} {...listeners} 
+                className="cursor-grab text-gray-500 hover:text-white pt-1 mr-2"
+                style={{ zIndex: 1}}
+            >
+                <GripVertical size={20} />
+            </button>
+            <div className="flex-grow pr-32">
+                <h3 className="font-semibold text-white">{section.title}</h3>
+                <div>
+                    {section.terms.map((term: string, idx: number) => (
+                        <p key={idx} className="text-sm text-gray-400">• {term}</p>
+                    ))}
+                </div>
+            </div>
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+                <button 
+                    type="button" 
+                    onClick={() => setIsEditing(true)} 
+                    className="flex items-center gap-1 px-2 py-1 rounded bg-indigo-700 text-gray-50 hover:text-white"
+                >
+                    <span>Edit</span> <Pencil size={16} />
+                </button>
+                <button 
+                    type="button" 
+                    onClick={() => onDelete(section.id)} 
+                    className="w-7 h-7 flex items-center text-gray-950 justify-center rounded-md bg-red-200 hover:bg-red-600"
+                >
+                    <Trash2 size={16} />
+                </button>
+            </div>
+        </div>
     </div>
   )
 }
