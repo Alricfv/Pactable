@@ -94,7 +94,7 @@ export function Navbar() {
                   <img
                     src={profile.avatar_url}
                     alt="User Profile"
-                    className="h-10 w-10 rounded-full object-cover cursor-pointer border-2 border-gray-50 group-hover:border-indigo-500 transition"
+                    className="h-10 w-10 rounded-full object-cover cursor-pointer border-2 border-gray-700 group-hover:border-indigo-500 transition"
                   />
                 ) : (
                   <UserCircle className="h-10 w-10 text-gray-400 cursor-pointer group-hover:text-indigo-500 transition" />
