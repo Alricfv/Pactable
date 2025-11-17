@@ -24,9 +24,9 @@ export function EmailBuzz() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <div className="max-w-xl lg:max-w-lg">
-            <h2 className="text-4xl font-semibold tracking-tight text-white">Lemme take your email, I&apos;ll tell you when it&apos;s up!</h2>
+            <h2 className="text-4xl font-semibold tracking-tight text-white">Stay Updated on Pactable&apos;s Progress</h2>
             <p className="mt-4 text-lg text-gray-300">
-              Your email is only used to deliver progress updates on Pactable :D
+              Get notified when new features and templates are available. Your email is only used for product updates.
             </p>
             <div className="mt-6 flex max-w-md gap-x-4">
               <form onSubmit={handleSubmit} className="flex max-w-lg gap-x-4">
@@ -54,7 +54,7 @@ export function EmailBuzz() {
                 >
                   {isLoading ? (
                     <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  ): isSubmitted ? ("Sent!"): ("Subscribe")}
+                  ): isSubmitted ? ("Subscribed!"): ("Subscribe")}
                 </button>
               </form>
             </div>
@@ -64,18 +64,18 @@ export function EmailBuzz() {
               <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10">
                 <CalendarDaysIcon aria-hidden="true" className="size-6 text-white" />
               </div>
-              <dt className="mt-4 text-base font-semibold text-white">Weekly Changes</dt>
+              <dt className="mt-4 text-base font-semibold text-white">Product Updates</dt>
               <dd className="mt-2 text-base/7 text-gray-400">
-                Will send the latest changes to Pactable, so you&apos;ll always be in the loop.
+                Receive the latest updates about new features, templates, and improvements to Pactable.
               </dd>
             </div>
             <div className="flex flex-col items-start">
               <div className="rounded-md bg-white/5 p-2 ring-1 ring-white/10">
                 <HandRaisedIcon aria-hidden="true" className="size-6 text-white" />
               </div>
-              <dt className="mt-4 text-base font-semibold text-white">Stop</dt>
+              <dt className="mt-4 text-base font-semibold text-white">Unsubscribe Anytime</dt>
               <dd className="mt-2 text-base/7 text-gray-400">
-                You can unsubscribe at any time yippee
+                You can unsubscribe from our updates at any time with one click.
               </dd>
             </div>
           </dl>

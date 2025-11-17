@@ -13,7 +13,7 @@ export default function Home() {
           Solving disputes before they happen
         </h1>
         <h2 className="text-xl font-semibold text-center py-6 tracking-tight text-balance text-black dark:text-white sm:text-2xl mb-[2px] sm:mb-6 sm:py-1">
-          Create simple agreements fast.
+          Create simple agreements fast - Perfect for event planning, Loans, freelance work and more.
         </h2>
         <div className="flex flex-col sm:flex-row gap-4 my-5  sm:max-w-none">
           <Link href="/signup">
@@ -30,13 +30,28 @@ export default function Home() {
             className ="h-18 rounded-md px-12 text-xl font-bold" 
             variant = "outline" 
           >
-            <a href="#features">Learn More</a>
+            <a href="#features">How it Works</a>
           </Button>
+        </div>
+
+        {/* Hero Screenshot */}
+        <div className="mt-12 mb-8 max-w-5xl mx-auto px-4">
+          <div className="relative">
+            {/* Glow effect */}
+            <div className="absolute -inset-0.5 bg-white/10 rounded-xl blur-lg opacity-40" />
+            <img
+              src="https://raw.githubusercontent.com/Alricfv/imageassets/refs/heads/main/Screenshot%202025-09-07%20201813.png"
+              alt="Pactable dashboard showing agreement creation and management interface"
+              className="relative w-full rounded-2xl shadow-2xl ring-1 ring-white/10 border border-gray-800"
+              width={1200}
+              height={800}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
+          </div>
         </div>
       </main>
       <FeatureSection />
       <EmailBuzz />
     </>
-
   );
 }

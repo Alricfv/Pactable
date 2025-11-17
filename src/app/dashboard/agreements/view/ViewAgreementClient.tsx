@@ -19,7 +19,7 @@ export type Participant = {
     signed_date?: string;
 };
 
-type Agreement = {
+export type Agreement = {
     id: string;
     title: string;
     content: string | null;
@@ -58,6 +58,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     const hasSigned = currentUserParticipant?.status === 'signed';
     const isCreator = agreement.created_by === userId;
     const [creatorProfile, setCreatorProfile] = useState<Profile | null>(null);
+    const [hasConsented, setHasConsented] = useState(false);
 
     useEffect(() =>{
         const fetchCreatorProfile = async() => {
@@ -285,12 +286,17 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     }, [agreement.content, agreement.title, agreement.agreement_participants, hasSigned, signatureName]);
 
    
-
     const handleSignAgreement = async () => {
         if (hasSigned)
             return;
+
         if(!signatureName.trim()){
             setError("Please type your name to sign");
+            return;
+        }
+
+        if (!hasConsented) {
+            setError("You must agree to the terms before signing.");
             return;
         }
 
@@ -417,11 +423,23 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                     </div>
                                 )}
                             </div>
+                            <div className="flex items-start mb-6">
+                                <input
+                                    id="consent-checkbox"
+                                    type="checkbox"
+                                    checked={hasConsented}
+                                    onChange={(e) => setHasConsented(e.target.checked)}
+                                    className="h-4 w-4 mt-1 rounded border-gray-600 bg-gray-800 text-indigo-600 focus:ring-indigo-600"
+                                />
+                                <label htmlFor="consent-checkbox" className="ml-3 text-sm text-gray-400">
+                                    I agree to use an electronic signature and to be legally bound by the terms of this agreement.
+                                </label>
+                            </div>
                         )}
 
                         <button
                             onClick={handleSignAgreement}
-                            disabled={hasSigned || loading}
+                            disabled={hasSigned || loading || (!hasSigned && !hasConsented)}
                             className="w-full px-4 py-3 rounded-md font-semibold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{ background: hasSigned ? '#16a34a' : '#4f46e5', color: 'white'}}
                         >

@@ -72,6 +72,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [logoPosition, setLogoPosition] = useState<'top-left' | 'top-right' | 'above-title'>('top-right');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const isLocked = agreement.agreement_participants.some(p => p.status === 'signed');
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -355,6 +356,25 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
             setLoading(false);
         }
     };
+
+    if (isLocked) {
+        return (
+            <div className="max-w-4xl mx-auto text-center p-8">
+                <AlertTriangle className="mx-auto h-12 w-12 text-yellow-400" />
+                <h2 className="mt-4 text-2xl font-semibold text-white">Agreement Locked</h2>
+                <p className="mt-2 text-gray-400">
+                    This agreement cannot be edited because one or more participants have already signed it.
+                </p>
+                <a
+                    href={`/dashboard/agreements/view/${agreement.id}`}
+                    className="mt-6 inline-block text-indigo-400 hover:underline"
+                >
+                    &larr; View Agreement
+                </a>
+            </div>
+        );
+    }
+    
 
     return(
         <div className="flex flex-col lg:flex-row gap-8 p-4">
