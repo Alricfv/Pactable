@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabaseClient';
 import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, UserCircle, Pencil, Lock } from 'lucide-react';
-import { PDFDocument, StandardFonts, rgb} from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
 type Profile = {
     username: string | null;
@@ -47,7 +47,7 @@ function wrapText(text: string, font: any, fontSize: number, maxWidth: number): 
     return lines;
 }
 
-export default function ViewAgreementClient({ agreement: initialAgreement, userId } : { agreement: Agreement, userId: string}){
+export default function ViewAgreementClient({ agreement: initialAgreement, userId }: { agreement: Agreement, userId: string }) {
     const [agreement, setAgreement] = useState(initialAgreement);
     const [signatureName, setSignatureName] = useState('');
     const [loading, setLoading] = useState(false);
@@ -60,8 +60,8 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     const [creatorProfile, setCreatorProfile] = useState<Profile | null>(null);
     const [hasConsented, setHasConsented] = useState(false);
 
-    useEffect(() =>{
-        const fetchCreatorProfile = async() => {
+    useEffect(() => {
+        const fetchCreatorProfile = async () => {
             if (!agreement.created_by)
                 return;
 
@@ -70,7 +70,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                 .select('username, email, avatar_url')
                 .eq('id', agreement.created_by)
                 .single();
-                
+
             if (data && !error) {
                 setCreatorProfile(data);
             }
@@ -83,7 +83,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
         const generatePdf = async () => {
             if (!agreement.content) return;
 
-            
+
             const sections = agreement.content.split('\n\n\n').map((sectionStr, index) => {
                 const lines = sectionStr.split('\n');
                 const title = lines.find(l => l.startsWith('### '))?.substring(4) || `Section ${index + 1}`;
@@ -103,10 +103,10 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
 
             const maxTitleWidth = width - 2 * margin;
             const titleLines = wrapText(agreement.title, boldFont, 30, maxTitleWidth);
-            for (const line of titleLines){
+            for (const line of titleLines) {
                 const lineWidth = boldFont.widthOfTextAtSize(line, 30);
                 const centerX = (width - lineWidth) / 2;
-                page.drawText(line, {x: centerX, y, font: boldFont, size: 30, color: rgb(0,0,0) });
+                page.drawText(line, { x: centerX, y, font: boldFont, size: 30, color: rgb(0, 0, 0) });
                 y -= 40;
             }
 
@@ -116,16 +116,16 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     y = height - margin;
                 }
                 page.drawText(section.title, { x: 50, y, font: boldFont, size: 16, color: rgb(0, 0, 0) });
-                
+
                 const titleWidth = boldFont.widthOfTextAtSize(section.title, 16);
                 const underlineY = y - 3;
                 page.drawLine({
                     start: { x: 50, y: underlineY },
                     end: { x: 50 + titleWidth, y: underlineY },
                     thickness: 1,
-                    color: rgb(0,0,0)
+                    color: rgb(0, 0, 0)
                 })
-                
+
                 y -= 25;
 
                 for (const term of section.terms) {
@@ -147,12 +147,12 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                 p.status === 'signed' && p.signature_text
             );
 
-            
+
 
 
             const isCurrentlySigning = !hasSigned && signatureName.trim() !== '';
 
-            
+
             if (signedParticipants.length > 0) {
                 if (y < 150) {
                     page = pdfDoc.addPage();
@@ -165,42 +165,42 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
 
                 page.drawText("Signatures", {
                     x: (width - boldFont.widthOfTextAtSize("Signatures", 20)) / 2,
-                    y: y+20,
+                    y: y + 20,
                     font: boldFont,
                     size: 20,
-                    color: rgb(0,0,0)
+                    color: rgb(0, 0, 0)
                 });
-            
-                
+
+
 
                 page.drawLine({
-                    start: { x: margin, y: y},
-                    end: {x: width - margin, y: y },
+                    start: { x: margin, y: y },
+                    end: { x: width - margin, y: y },
                     thickness: 2,
-                    color: rgb(0,0,0)
+                    color: rgb(0, 0, 0)
                 })
 
                 y -= 50;
 
-                for (const participant of signedParticipants){
-                    if(y < margin + 50){
+                for (const participant of signedParticipants) {
+                    if (y < margin + 50) {
                         page = pdfDoc.addPage();
                         y = height - margin;
                     }
 
                     const pageCenter = width / 2
 
-                    page.drawText("Signature",{
-                        x:pageCenter - 200,
+                    page.drawText("Signature", {
+                        x: pageCenter - 200,
                         y: y + 30,
                         font: boldFont,
                         size: 14,
-                        color: rgb(0,0,0)
+                        color: rgb(0, 0, 0)
                     });
 
                     page.drawLine({
                         start: { x: pageCenter - 200, y: y },
-                        end: { x: pageCenter -40, y: y },
+                        end: { x: pageCenter - 40, y: y },
                         thickness: 1,
                         color: rgb(0.5, 0.5, 0.5),
                     });
@@ -213,12 +213,12 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                         color: rgb(0, 0, 0),
                     });
 
-                    page.drawText("Date:", { 
-                        x: pageCenter + 60, 
-                        y: y + 30, 
-                        font: boldFont, 
-                        size: 14, 
-                        color: rgb(0,0,0) 
+                    page.drawText("Date:", {
+                        x: pageCenter + 60,
+                        y: y + 30,
+                        font: boldFont,
+                        size: 14,
+                        color: rgb(0, 0, 0)
                     });
 
                     page.drawLine({
@@ -235,11 +235,11 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                             y: y + 5,
                             font: font,
                             size: 14,
-                            color: rgb(0,0,0)
+                            color: rgb(0, 0, 0)
                         })
                     }
 
-                    y-=80
+                    y -= 80
                 }
 
                 if (isCurrentlySigning) {
@@ -247,22 +247,22 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                         page = pdfDoc.addPage();
                         y = height - margin;
                     }
-                
+
                     page.drawText("Signature", {
                         x: margin,
                         y: y + 30,
                         font: boldFont,
                         size: 14,
-                        color: rgb(0,0,0)
+                        color: rgb(0, 0, 0)
                     });
-                    
+
                     page.drawLine({
                         start: { x: margin, y: y },
                         end: { x: margin + 200, y: y },
                         thickness: 1,
                         color: rgb(0.5, 0.5, 0.5),
                     });
-                    
+
                     page.drawText(signatureName, {
                         x: margin + 20,
                         y: y + 5,
@@ -279,18 +279,18 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
             const url = URL.createObjectURL(blob);
             setPdfUrl(`${url}#toolbar=0`);
 
-            return() => URL.revokeObjectURL(url);
+            return () => URL.revokeObjectURL(url);
         };
 
         generatePdf().catch(console.error);
     }, [agreement.content, agreement.title, agreement.agreement_participants, hasSigned, signatureName]);
 
-   
+
     const handleSignAgreement = async () => {
         if (hasSigned)
             return;
 
-        if(!signatureName.trim()){
+        if (!signatureName.trim()) {
             setError("Please type your name to sign");
             return;
         }
@@ -303,10 +303,10 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
         setLoading(true);
         setError(null);
 
-        try{
+        try {
             const { error: updateError } = await supabase
                 .from('agreement_participants')
-                .update({ 
+                .update({
                     status: 'signed',
                     signature_text: signatureName,
                     signed_date: new Date().toISOString()
@@ -314,19 +314,19 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                 .eq('agreement_id', agreement.id)
                 .eq('user_id', userId);
 
-            if (updateError){
+            if (updateError) {
                 setError(`Failed to sign agreement: ${updateError.message}`);
             }
 
             const updatedParticipants = agreement.agreement_participants.map(p =>
-                p.user_id === userId ? {...p, status: 'signed' as const, signature_text: signatureName, signed_date: new Date().toISOString() } : p
+                p.user_id === userId ? { ...p, status: 'signed' as const, signature_text: signatureName, signed_date: new Date().toISOString() } : p
             );
             setAgreement({ ...agreement, agreement_participants: updatedParticipants });
         }
-        catch(err: any){
+        catch (err: any) {
             setError(`Failed to sign agreement: ${err.message}`);
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
@@ -336,11 +336,11 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
             <h1 className="text-white font-semibold mb-10 text-5xl text-center">
                 Agreement Review
             </h1>
-            
-            <div className= "grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2 h-100% w-100% bg-[#0f0f0f] py-6 px-6 rounded-lg flex items-center justify-center border border-[#262626]">
                     {pdfUrl ? (
-                        <iframe src={pdfUrl}  className="w-full  aspect-[8.5/11] rounded-lg" style={{ border: 'none'}} title="Agreement PDF Review"/>
+                        <iframe src={pdfUrl} className="w-full  aspect-[8.5/11] rounded-lg" style={{ border: 'none' }} title="Agreement PDF Review" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-[#2e2e2e] rounded-lg border border-[#262626]">
                             <p className="text-gray-400">Agreement preview coming up!</p>
@@ -356,7 +356,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                         <div className="space-y-4 mb-8">
                             <div key="creator" className="flex justify-between items-center">
                                 <div className="flex items-center gap-3">
-                                    <UserCircle className="h-10 w-10 text-indigo-500"/>
+                                    <UserCircle className="h-10 w-10 text-indigo-500" />
                                     <div>
                                         <p className="font-medium text-white">
                                             {creatorProfile?.username || creatorProfile?.email || 'Owner'}
@@ -372,9 +372,9 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                 <div key={p.user_id} className="flex justify-between items-center">
                                     <div className="flex items-center gap-3">
                                         {p.profiles?.avatar_url ? (
-                                            <img src={p.profiles.avatar_url } alt="avatar" className="h-10 w-10 rounded-full"/>
+                                            <img src={p.profiles.avatar_url} alt="avatar" className="h-10 w-10 rounded-full" />
                                         ) : (
-                                            <UserCircle className="h-10 w-10 text-gray-500"/>
+                                            <UserCircle className="h-10 w-10 text-gray-500" />
                                         )}
                                         <div>
                                             <p className="font-medium text-white">
@@ -385,12 +385,12 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                     </div>
                                     {p.status === 'signed' ? (
                                         <div className="flex items-center gap-2 text-green-400">
-                                            <CheckCircle size={18}/>
+                                            <CheckCircle size={18} />
                                             <span>Signed</span>
                                         </div>
-                                    ):(
+                                    ) : (
                                         <div className="flex items-center gap-2 text-yellow-400">
-                                            <Clock size={18}/>
+                                            <Clock size={18} />
                                             <span>Pending</span>
                                         </div>
                                     )}
@@ -399,62 +399,64 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                         </div>
 
                         {!hasSigned && (
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-white mb-2">
-                                    Your Signature
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Type your name to sign"
-                                    value = {signatureName}
-                                    onChange={(e) => setSignatureName(e.target.value)}
-                                    className="block w-full bg-black rounded-md border-[#262626] border p-2 text-white mb-2"
-                                    style = {{ fontFamily: 'cursive'}}
-                                    required
-                                />
-                                {signatureName && (
-                                    <div className="mt-2 p-3 bg-[#1a1a1a] rounded-md">
-                                        <p className="text-sm text-gray-400">
-                                            Signature Preview
-                                        </p>
-                                        <p className="text-xl text-white mt-1" style={{ fontFamily: 'cursive'}}>
-                                            {signatureName}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="flex items-start mb-6">
-                                <input
-                                    id="consent-checkbox"
-                                    type="checkbox"
-                                    checked={hasConsented}
-                                    onChange={(e) => setHasConsented(e.target.checked)}
-                                    className="h-4 w-4 mt-1 rounded border-gray-600 bg-gray-800 text-indigo-600 focus:ring-indigo-600"
-                                />
-                                <label htmlFor="consent-checkbox" className="ml-3 text-sm text-gray-400">
-                                    I agree to use an electronic signature and to be legally bound by the terms of this agreement.
-                                </label>
-                            </div>
+                            <>
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-white mb-2">
+                                        Your Signature
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Type your name to sign"
+                                        value={signatureName}
+                                        onChange={(e) => setSignatureName(e.target.value)}
+                                        className="block w-full bg-black rounded-md border-[#262626] border p-2 text-white mb-2"
+                                        style={{ fontFamily: 'cursive' }}
+                                        required
+                                    />
+                                    {signatureName && (
+                                        <div className="mt-2 p-3 bg-[#1a1a1a] rounded-md">
+                                            <p className="text-sm text-gray-400">
+                                                Signature Preview
+                                            </p>
+                                            <p className="text-xl text-white mt-1" style={{ fontFamily: 'cursive' }}>
+                                                {signatureName}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex items-start mb-6">
+                                    <input
+                                        id="consent-checkbox"
+                                        type="checkbox"
+                                        checked={hasConsented}
+                                        onChange={(e) => setHasConsented(e.target.checked)}
+                                        className="h-4 w-4 mt-1 rounded border-gray-600 bg-gray-800 text-indigo-600 focus:ring-indigo-600"
+                                    />
+                                    <label htmlFor="consent-checkbox" className="ml-3 text-sm text-gray-400">
+                                        I agree to use an electronic signature and to be legally bound by the terms of this agreement.
+                                    </label>
+                                </div>
+                            </>
                         )}
 
                         <button
                             onClick={handleSignAgreement}
                             disabled={hasSigned || loading || (!hasSigned && !hasConsented)}
                             className="w-full px-4 py-3 rounded-md font-semibold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            style={{ background: hasSigned ? '#16a34a' : '#4f46e5', color: 'white'}}
+                            style={{ background: hasSigned ? '#16a34a' : '#4f46e5', color: 'white' }}
                         >
-                            {loading ? 'Signing...' : hasSigned ? 'Agreement Signed': 'Sign Agreement'}
+                            {loading ? 'Signing...' : hasSigned ? 'Agreement Signed' : 'Sign Agreement'}
                         </button>
                         {isCreator ? (
                             <a
                                 href={`/dashboard/agreements/edit/${agreement.id}`}
                                 className="w-full px-4 py-3 rounded-md font-semibold text-white transition mt-4 flex items-center justify-center gap-2"
-                                style={{ background: '#2563eb', color: 'white'}}
+                                style={{ background: '#2563eb', color: 'white' }}
                             >
                                 <Pencil size={18} />
                                 Edit Agreement
                             </a>
-                        ):(
+                        ) : (
                             <div className="w-full px-4 py-3 rounded-md font-semibold text-gray-400 bg-gray-800 flex items-center justify-center gap-2 mt-4 cursor-not-allowed">
                                 <Lock size={18} />
                                 You can&apos;t make changes to this agreement
