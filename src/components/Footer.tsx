@@ -1,21 +1,33 @@
-'use client'
-
-import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 export function Footer() {
-    const pathname = usePathname();
-    const hiddenRoutes = ['/signin', '/signup', '/dashboard', '/dashboard/agreements', '/dashboard/profile'];
+    const currentYear = new Date().getFullYear()
 
-    if (hiddenRoutes.includes(pathname)){
-        return null
-    }
-    else{
-        return(
-            <footer
-                className="border-t border-[#232323] py-4 text-center text-sm text-gray-400 bg-[#09090b]"
-            >
-                © {new Date().getFullYear()} Pactable. All rights reserved.
-            </footer>
-        )
-    }
+    return (
+        <footer className="bg-black border-t border-neutral-900">
+            <div className="mx-auto max-w-6xl px-6 py-12">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-8">
+                        <Link href="/" className="text-lg font-medium text-white hover:text-neutral-300 transition-colors">
+                            Pactable
+                        </Link>
+                        <nav className="flex gap-6 text-sm">
+                            <Link href="/#features" className="text-neutral-500 hover:text-white transition-colors">
+                                Features
+                            </Link>
+                            <Link href="/signup" className="text-neutral-500 hover:text-white transition-colors">
+                                Sign up
+                            </Link>
+                            <Link href="/signin" className="text-neutral-500 hover:text-white transition-colors">
+                                Sign in
+                            </Link>
+                        </nav>
+                    </div>
+                    <p className="text-sm text-neutral-600">
+                        © {currentYear} Pactable
+                    </p>
+                </div>
+            </div>
+        </footer>
+    )
 }

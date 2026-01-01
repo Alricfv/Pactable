@@ -12,29 +12,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-type Profile = {
-  username: string | null;
-  avatar_url: string | null;
-  email: string | null;
-};
-
-type Participant = {
-  user_id: string;
-  status: 'pending' | 'signed';
-  profiles: Profile | null;
-  signature_text?: string;
-  signed_date?: string;
-};
-
-type Agreement = {
-  id: string;
-  title: string;
-  content: string | null;
-  created_at: string;
-  created_by: string;
-  agreement_participants: Participant[];
-};
-
 // Mock the supabase client
 jest.mock('@/lib/supabaseClient', () => ({
   createClient: () => ({
@@ -90,11 +67,11 @@ describe('ViewAgreementClient', () => {
   it('should show "Agreement Signed" and a disabled button if the user has already signed', () => {
     const signedParticipant: Participant = { ...mockParticipant, status: 'signed' };
     const signedAgreement: Agreement = { ...mockAgreement, agreement_participants: [signedParticipant] };
-    
+
     render(<ViewAgreementClient agreement={signedAgreement} userId="user-123" />);
 
     const signButton = screen.getByRole('button', { name: /Agreement Signed/i });
-    
+
     // The button should be present and disabled
     expect(signButton).toBeInTheDocument();
     expect(signButton).toBeDisabled();

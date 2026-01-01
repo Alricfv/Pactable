@@ -4,21 +4,35 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { FeatureSection } from "@/components/FeatureSection"
 import { EmailBuzz } from "@/components/EmailBuzz"
+import { UseCasesSection } from "@/components/UseCasesSection"
+import { Footer } from "@/components/Footer"
 
 export default function Home() {
   return (
-    <>
-      <main className="flex flex-col items-center justify-center min-h-[40vh] sm:min-h-[80vh]">
-        <h1 className="text-5xl py-2 font-semibold text-center tracking-tight text-balance text-black dark:text-white sm:text-6xl mb-[2px] sm:mb-6">
-          Solving disputes before they happen
+    <div className="bg-black min-h-screen">
+      <main className="flex flex-col items-center justify-center min-h-[90vh] px-6">
+        {/* Badge - subtle */}
+        <div className="mb-8">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-800 text-neutral-400 text-sm">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+            Now in Beta
+          </span>
+        </div>
+
+        {/* Main Headline - clean, large, white */}
+        <h1 className="text-5xl sm:text-7xl font-medium text-center tracking-tight text-white mb-6 max-w-4xl leading-[1.1]">
+          Agreements made simple
         </h1>
-        <h2 className="text-xl font-semibold text-center py-6 tracking-tight text-balance text-black dark:text-white sm:text-2xl mb-[2px] sm:mb-6 sm:py-1">
-          Create simple agreements fast - Perfect for event planning, Loans, freelance work and more.
-        </h2>
-        <div className="flex flex-col sm:flex-row gap-4 my-5  sm:max-w-none">
+
+        {/* Subheadline - muted */}
+        <p className="text-lg sm:text-xl text-center text-neutral-400 max-w-2xl mb-12 leading-relaxed">
+          Create clear agreements for housemates, freelancers, students, and everyday situations. No legal jargon required.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 mb-20">
           <Link href="/signup">
-            <Button className="h-18 rounded-md px-12 text-xl font-bold">
-              Try it Out!
+            <Button className="h-12 rounded-lg px-8 text-base font-medium bg-white text-black hover:bg-neutral-200 transition-colors">
+              Get started
             </Button>
           </Link>
           <Button
@@ -27,31 +41,41 @@ export default function Home() {
                 behavior: 'smooth'
               });
             }}
-            className ="h-18 rounded-md px-12 text-xl font-bold" 
-            variant = "outline" 
+            className="h-12 rounded-lg px-8 text-base font-medium bg-transparent text-white border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-700 transition-colors"
+            variant="outline"
           >
-            <a href="#features">How it Works</a>
+            Learn more
+          </Button>
+          <Button
+            onClick={() => {
+              document.getElementById('subscribe')?.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }}
+            className="h-12 rounded-lg px-8 text-base font-medium bg-transparent text-neutral-400 hover:text-white transition-colors"
+            variant="ghost"
+          >
+            Stay updated
           </Button>
         </div>
 
-        {/* Hero Screenshot */}
-        <div className="mt-12 mb-8 max-w-5xl mx-auto px-4">
-          <div className="relative">
-            {/* Glow effect */}
-            <div className="absolute -inset-0.5 bg-white/10 rounded-xl blur-lg opacity-40" />
+        {/* Hero Screenshot - clean frame */}
+        <div className="max-w-5xl mx-auto w-full">
+          <div className="relative rounded-xl overflow-hidden border border-neutral-800 shadow-2xl">
             <img
               src="https://raw.githubusercontent.com/Alricfv/imageassets/refs/heads/main/Screenshot%202025-09-07%20201813.png"
-              alt="Pactable dashboard showing agreement creation and management interface"
-              className="relative w-full rounded-2xl shadow-2xl ring-1 ring-white/10 border border-gray-800"
+              alt="Pactable dashboard"
+              className="w-full"
               width={1200}
               height={800}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
           </div>
         </div>
       </main>
+
       <FeatureSection />
+      <UseCasesSection />
       <EmailBuzz />
-    </>
+    </div>
   );
 }
