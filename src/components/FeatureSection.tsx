@@ -64,11 +64,11 @@ const features = [
 
 export function FeatureSection() {
   return (
-    <div id="features" className="bg-background py-32 border-t border-neutral-900/50">
+    <div id="features" className="bg-background py-16 sm:py-32 border-t border-neutral-900/50">
       <div className="mx-auto max-w-6xl px-6">
 
         {/* How it Works - Modular Layout */}
-        <div className="mb-32">
+        <div className="mb-16 sm:mb-32">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-xl">
               <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Process</p>
@@ -95,7 +95,7 @@ export function FeatureSection() {
         </div>
 
         {/* Templates - Balanced Grid */}
-        <div className="mb-32">
+        <div className="mb-16 sm:mb-32">
           <div className="mb-12">
             <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Library</p>
             <h2 className="text-3xl sm:text-4xl font-semibold text-white">
@@ -120,7 +120,7 @@ export function FeatureSection() {
         </div>
 
         {/* Features - Clean & Grounded */}
-        <div className="mb-32">
+        <div className="mb-16 sm:mb-32">
           <div className="mb-12">
             <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Capabilities</p>
             <h2 className="text-3xl sm:text-4xl font-semibold text-white">

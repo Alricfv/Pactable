@@ -10,7 +10,7 @@ import { Footer } from "@/components/Footer"
 export default function Home() {
   return (
     <div className="bg-background min-h-screen">
-      <main className="flex flex-col items-center justify-center min-h-[95vh] px-6 pt-20 pb-32">
+      <main className="flex flex-col items-center justify-center min-h-[90vh] px-6 pt-32 pb-16 sm:pb-32">
         {/* Badge - subtle, grounded */}
         <div className="mb-10">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-800 bg-neutral-900/50 text-neutral-400 text-xs font-medium">

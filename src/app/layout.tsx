@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <body className={inter.className + " text-white "}>
         <Navbar />
-        <main className="pt-32 min-h-[80vh]">{children}</main>
+        <div className="min-h-[80vh]">{children}</div>
         <Footer />
       </body>
     </html>
