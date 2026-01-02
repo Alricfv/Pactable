@@ -59,7 +59,7 @@ export function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 mx-auto max-w-[95%] px-6 pt-6">
-      <nav aria-label="Global" className="flex items-center justify-between p-4 bg-black border border-neutral-800 rounded-xl">
+      <nav aria-label="Global" className="flex items-center justify-between p-4 bg-background border border-neutral-800 rounded-xl">
         <div className="flex lg:flex-1">
           <a href={isProtectedRoute ? "/dashboard" : "/"} className="-m-1.5 p-1.5">
             <span className="sr-only">Pactable</span>
@@ -104,7 +104,7 @@ export function Navbar() {
                 ) : (
                   <UserCircle className="h-10 w-10 text-neutral-400 cursor-pointer group-hover:text-white transition" />
                 )}
-                <div className="absolute right-0 mt-2 w-48 bg-black border border-neutral-800 rounded-md shadow-lg py-1 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-background border border-neutral-800 rounded-md shadow-lg py-1 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
                   <a
                     href="/dashboard/profile"
                     className="block px-4 py-2 text-sm text-neutral-400 hover:bg-neutral-900 hover:text-white"
@@ -133,7 +133,7 @@ export function Navbar() {
 
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-50" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-black p-6 sm:max-w-sm border-l border-neutral-800">
+        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-background p-6 sm:max-w-sm border-l border-neutral-800">
           <div className="flex items-center justify-between">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Pactable</span>
