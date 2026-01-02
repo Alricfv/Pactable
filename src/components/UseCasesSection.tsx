@@ -21,32 +21,38 @@ const useCases = [
 
 export function UseCasesSection() {
     return (
-        <section id="use-cases" className="bg-black py-32 border-t border-neutral-900">
+        <section id="use-cases" className="bg-background py-32 border-t border-neutral-900/50">
             <div className="max-w-6xl mx-auto px-6">
-                {/* Header */}
-                <div className="text-center mb-16">
-                    <p className="text-sm text-neutral-500 uppercase tracking-wider mb-4">Use cases</p>
-                    <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4">
-                        Built for real situations
-                    </h2>
-                    <p className="text-lg text-neutral-500 max-w-xl mx-auto">
+                {/* Header - Refined */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+                    <div className="max-w-xl">
+                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Context</p>
+                        <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-2">
+                            Built for real situations
+                        </h2>
+                    </div>
+                    <p className="text-lg text-neutral-500 max-w-sm leading-relaxed">
                         Whether you're moving in with roommates or lending something to a friend.
                     </p>
                 </div>
 
-                {/* Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Cards - Human Interaction */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     {useCases.map((useCase) => (
                         <div
                             key={useCase.title}
-                            className="p-8 rounded-lg border border-neutral-800 hover:border-neutral-700 transition-colors"
+                            className="group relative p-10 rounded-2xl border border-neutral-900 bg-neutral-900/10 transition-all duration-500 hover:bg-neutral-900/20 hover:border-neutral-800 hover:-translate-y-1"
                         >
-                            <h3 className="text-lg font-medium text-white mb-3">
-                                {useCase.title}
-                            </h3>
-                            <p className="text-neutral-500 leading-relaxed">
-                                {useCase.description}
-                            </p>
+                            <div className="relative z-10">
+                                <h3 className="text-xl font-semibold text-white mb-4 group-hover:text-emerald-400 transition-colors duration-300">
+                                    {useCase.title}
+                                </h3>
+                                <p className="text-neutral-500 leading-relaxed font-normal">
+                                    {useCase.description}
+                                </p>
+                            </div>
+                            {/* Subtle border highlight on hover - human touch */}
+                            <div className="absolute inset-0 rounded-2xl border border-emerald-500/0 group-hover:border-emerald-500/10 transition-colors duration-500" />
                         </div>
                     ))}
                 </div>

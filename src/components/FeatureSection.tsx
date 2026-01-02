@@ -64,35 +64,41 @@ const features = [
 
 export function FeatureSection() {
   return (
-    <div id="features" className="bg-black py-32">
+    <div id="features" className="bg-background py-32 border-t border-neutral-900/50">
       <div className="mx-auto max-w-6xl px-6">
 
-        {/* How it Works */}
-        <div className="text-center mb-20">
-          <p className="text-sm text-neutral-500 uppercase tracking-wider mb-4">How it works</p>
-          <h2 className="text-3xl sm:text-4xl font-medium text-white mb-6">
-            Four simple steps
-          </h2>
-        </div>
-
-        {/* Steps */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-32">
-          {steps.map((step) => (
-            <div key={step.step} className="text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-neutral-800 text-neutral-400 text-sm font-medium mb-4">
-                {step.step}
-              </div>
-              <h3 className="text-lg font-medium text-white mb-2">{step.title}</h3>
-              <p className="text-sm text-neutral-500 leading-relaxed">{step.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Templates */}
+        {/* How it Works - Modular Layout */}
         <div className="mb-32">
-          <div className="text-center mb-12">
-            <p className="text-sm text-neutral-500 uppercase tracking-wider mb-4">Templates</p>
-            <h2 className="text-3xl sm:text-4xl font-medium text-white">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div className="max-w-xl">
+              <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Process</p>
+              <h2 className="text-3xl sm:text-4xl font-semibold text-white">
+                Four simple steps to clarity
+              </h2>
+            </div>
+            <p className="text-neutral-500 max-w-xs">
+              We've stripped away the complexity to help you focus on what matters: the agreement.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-900/50 border border-neutral-900/50 rounded-2xl overflow-hidden">
+            {steps.map((step) => (
+              <div key={step.step} className="bg-background p-8 hover:bg-neutral-900/30 transition-colors duration-500 group">
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 text-xs font-bold mb-6 group-hover:border-neutral-700 transition-colors">
+                  {step.step}
+                </div>
+                <h3 className="text-lg font-medium text-white mb-3">{step.title}</h3>
+                <p className="text-sm text-neutral-500 leading-relaxed">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Templates - Balanced Grid */}
+        <div className="mb-32">
+          <div className="mb-12">
+            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Library</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-white">
               Start with a template
             </h2>
           </div>
@@ -100,12 +106,12 @@ export function FeatureSection() {
             {templates.map((template) => (
               <div
                 key={template.title}
-                className="p-6 rounded-lg border border-neutral-800 hover:border-neutral-700 transition-colors"
+                className="p-6 rounded-xl border border-neutral-900 bg-neutral-900/20 hover:border-neutral-800 hover:bg-neutral-900/40 transition-all duration-300 group cursor-default"
               >
-                <h3 className="text-base font-medium text-white mb-2">
+                <h3 className="text-base font-medium text-white mb-2 group-hover:text-emerald-400 transition-colors">
                   {template.title}
                 </h3>
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-neutral-500 leading-relaxed">
                   {template.description}
                 </p>
               </div>
@@ -113,11 +119,11 @@ export function FeatureSection() {
           </div>
         </div>
 
-        {/* Features */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <p className="text-sm text-neutral-500 uppercase tracking-wider mb-4">Features</p>
-            <h2 className="text-3xl sm:text-4xl font-medium text-white">
+        {/* Features - Clean & Grounded */}
+        <div className="mb-32">
+          <div className="mb-12">
+            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Capabilities</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-white">
               Everything you need
             </h2>
           </div>
@@ -125,9 +131,9 @@ export function FeatureSection() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="p-6 rounded-lg border border-neutral-800"
+                className="p-8 rounded-2xl border border-neutral-900 bg-neutral-900/10 hover:border-neutral-800 transition-colors duration-500"
               >
-                <h3 className="text-base font-medium text-white mb-2">
+                <h3 className="text-lg font-medium text-white mb-3">
                   {feature.title}
                 </h3>
                 <p className="text-sm text-neutral-500 leading-relaxed">
@@ -138,13 +144,13 @@ export function FeatureSection() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center pt-8 border-t border-neutral-900">
-          <p className="text-lg text-neutral-400 mb-6">
-            Ready to get started?
+        {/* CTA - Human Touch */}
+        <div className="text-center py-20 rounded-3xl bg-neutral-900/20 border border-neutral-900/50">
+          <p className="text-xl text-neutral-400 mb-10 max-w-md mx-auto">
+            Make clearer agreements today.
           </p>
           <Link href="/signup">
-            <Button className="h-12 rounded-lg px-8 text-base font-medium bg-white text-black hover:bg-neutral-200 transition-colors">
+            <Button className="h-12 rounded-lg px-10 text-base font-medium bg-white text-black hover:bg-neutral-200 transition-all duration-300 active:scale-95 shadow-xl shadow-white/5">
               Create your first agreement
             </Button>
           </Link>
