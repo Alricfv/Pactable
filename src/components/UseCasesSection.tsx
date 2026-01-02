@@ -21,7 +21,7 @@ const useCases = [
 
 export function UseCasesSection() {
     return (
-        <section id="use-cases" className="bg-background py-32 border-t border-neutral-900/50">
+        <section id="use-cases" className="bg-background py-16 sm:py-32 border-t border-neutral-900/50">
             <div className="max-w-6xl mx-auto px-6">
                 {/* Header - Refined */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">

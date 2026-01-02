@@ -19,7 +19,7 @@ export function EmailBuzz() {
   }
 
   return (
-    <div id="subscribe" className="bg-background py-32 border-t border-neutral-900/50">
+    <div id="subscribe" className="bg-background py-16 sm:py-32 border-t border-neutral-900/50">
       <div className="mx-auto max-w-2xl px-6 text-center">
         <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Updates</p>
         <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6">
