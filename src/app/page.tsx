@@ -29,19 +29,19 @@ export default function Home() {
           Create clear agreements for housemates, freelancers, students, and everyday situations. No legal jargon required.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-24">
-          <Link href="/signup">
-            <Button className="h-12 rounded-lg px-8 text-base font-medium bg-white text-black hover:bg-neutral-200 transition-all duration-300 active:scale-95">
+        <div className="flex flex-col sm:flex-row gap-4 mb-24 w-full sm:w-auto px-4 sm:px-0">
+          <Button asChild className="h-12 rounded-lg px-8 text-base font-medium bg-white text-black hover:bg-neutral-200 transition-all duration-300 active:scale-95 w-full sm:min-w-[160px]">
+            <Link href="/signup">
               Get started
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <Button
             onClick={() => {
               document.getElementById('features')?.scrollIntoView({
                 behavior: 'smooth'
               });
             }}
-            className="h-12 rounded-lg px-8 text-base font-medium bg-neutral-900/50 text-white border border-neutral-800 hover:bg-neutral-800 hover:border-neutral-700 transition-all duration-300 active:scale-95"
+            className="h-12 rounded-lg px-8 text-base font-medium bg-neutral-900/50 text-white border border-neutral-800 hover:bg-neutral-800 hover:border-neutral-700 transition-all duration-300 active:scale-95 w-full sm:min-w-[160px]"
             variant="outline"
           >
             Learn more
@@ -52,7 +52,7 @@ export default function Home() {
                 behavior: 'smooth'
               });
             }}
-            className="h-12 rounded-lg px-8 text-base font-medium bg-transparent text-neutral-500 hover:text-white transition-colors duration-300"
+            className="h-12 rounded-lg px-8 text-base font-medium bg-transparent text-neutral-500 hover:text-white transition-colors duration-300 w-full sm:w-auto"
             variant="ghost"
           >
             Stay updated
