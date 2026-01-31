@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/lib/supabaseClient'
-import { Session } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import { UserCircle, Camera, Loader2, Check } from 'lucide-react'
 
@@ -11,7 +11,7 @@ type Profile = {
     avatar_url: string | null
 }
 
-export default function ProfileForm({session,profile} : {session: Session, profile: Profile | null}){
+export default function ProfileForm({ user, profile }: { user: User; profile: Profile | null }){
     const supabase = createClient()
     const router = useRouter()
     const [loading, setLoading] = useState(false)
@@ -44,7 +44,7 @@ export default function ProfileForm({session,profile} : {session: Session, profi
     }
 
     const uploadAvatar = async() => {
-        if(!selectedFile  || !session?.user)
+        if(!selectedFile  || !user)
             return
 
         try{
@@ -52,7 +52,7 @@ export default function ProfileForm({session,profile} : {session: Session, profi
             setMessage(null)
 
             const fileExt = selectedFile.name.split('.').pop()
-            const fileName = `${session.user.id}.${Date.now()}.${fileExt}`
+            const fileName = `${user.id}.${Date.now()}.${fileExt}`
             const filePath = `${fileName}`
 
             const { error: uploadError } = await supabase
@@ -94,9 +94,9 @@ export default function ProfileForm({session,profile} : {session: Session, profi
             const { error } = await supabase
                 .from('profiles')
                 .upsert({
-                    id: session.user.id,
+                    id: user.id,
                     username,
-                    email: session.user.email,
+                    email: user.email,
                     avatar_url: avatarUrl
                 })
 
@@ -125,10 +125,10 @@ export default function ProfileForm({session,profile} : {session: Session, profi
     }
 
     return(
-        <div className="max-w-2xl mx-auto p-4 sm:p-6">
-            <h1 className="text-5xl text-center font-bold text-white mb-6">
+        <div className="max-w-2xl py-32 mx-auto p-4 ">
+            <div className="text-5xl text-center font-bold text-white mb-6">
                 Your Profile
-            </h1>
+            </div>
             <div className="space-y-6 bg-[#0f0f0f] p-8 rounded-lg border border-[#262626]">
                 <div className="flex flex-col items-center">
                     <div className="relative h-32 w-32 cursor-pointer group" onClick={handleAvatarClick}>
@@ -183,7 +183,7 @@ export default function ProfileForm({session,profile} : {session: Session, profi
                     <input
                         id="email"
                         type="text"
-                        value={session.user.email}
+                        value={user.email || ''}
                         disabled
                         className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-gray-500"
                     />

@@ -1,14 +1,10 @@
 import { createClient } from '@/lib/supabaseServer';
-import { redirect } from 'next/navigation';
 import DashboardClient from './DashboardClient';
+import { requireUser } from '@/lib/requestUser';
 
 export default async function DashboardPage() {
     const supabase = createClient();
-    const {data: {user}} = await supabase.auth.getUser();
-
-    if(!user){
-        redirect('/signin');
-    }
+    const user = requireUser();
 
     const {data: createdAgreements, error: createdError} = await supabase
         .from('agreements')

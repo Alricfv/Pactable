@@ -35,7 +35,7 @@ export default function SignInPage() {
     }
 
     return(
-            <div className="flex items-center justify-center min-h-[70vh]" >
+            <div className="flex items-center justify-center min-h-screen" >
                 <div className="w-full max-w-md space-y-6 bg-[#0f0f0f] rounded-xl p-8">
                     <h2 className="text-2xl font-bold text-center mb-2">Log In</h2>
                     <form 

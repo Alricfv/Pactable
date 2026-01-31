@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import ClientAgreementPage from './ClientAgreementPage';
 import { createClient } from '@/lib/supabaseServer';
-import { redirect } from 'next/navigation';
+import { requireUser } from '@/lib/requestUser';
 
 export type TemplateSection = {
     id: string;
@@ -19,11 +19,7 @@ export type Template= {
 
 export default async function CreateAgreementPage(){
     const supabase = createClient();
-    const {data: {user}} = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect ('/signin');
-    }
+    const user = requireUser();
     const filePath = path.join(process.cwd(), 'src', 'lib', 'templates.json');
     const jsonData = await fs.readFile(filePath, 'utf-8');
     const templates: Template[] = JSON.parse(jsonData);

@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# micro-contracts
+.github
+
+# sql backup
+full_dbbackup.sql

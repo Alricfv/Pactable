@@ -1,15 +1,11 @@
 import { createClient } from '@/lib/supabaseServer';
-import { redirect } from 'next/navigation';
 import ViewAgreementClient from '../ViewAgreementClient';
 import type { Participant } from '../ViewAgreementClient';
+import { requireUser } from '@/lib/requestUser';
 
 export default async function ViewAgreementPage({ params } : { params: { agreementId : string} }){
     const supabase = createClient();
-    const { data: {user} } = await supabase.auth.getUser();
-
-    if (!user){
-        redirect('/signin');
-    }
+    const user = requireUser();
 
     const { data: agreement, error } = await supabase
         .from('agreements')

@@ -50,7 +50,6 @@ const AgreementPreview = ({ title, content }: {title: string, content: string | 
 };
 
 export default function DashboardClient({agreements: initialAgreements, userId} : {agreements: Agreement[], userId: string }) {
-
     const [error, setError] = useState<string | null>(null);
     const supabase = createClient();
     const [agreements, setAgreements] = useState(initialAgreements);
@@ -59,6 +58,8 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
     
     const handleDeleteAgreement = async (agreementId: string) => {
         setError(null);
+        
+        // Remove session check here - let middleware handle it
         const{ error: rpcError } = await supabase.rpc('delete_agreement',{
              agreement_id: agreementId 
         });
@@ -100,7 +101,7 @@ export default function DashboardClient({agreements: initialAgreements, userId} 
                 title={agreementToDelete?.title || ''}
             />
 
-            <div className="w-full px-6 sm:px-10 space-y-12">
+            <div className="w-full px-6 sm:px-10 min-h-screen py-32">
                 <div className="text-center mb-12">
                     <h1 className="text-5xl font-bold text-white">
                         Welcome to your Dashboard!

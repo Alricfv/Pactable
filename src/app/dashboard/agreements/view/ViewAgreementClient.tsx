@@ -284,12 +284,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
 
         generatePdf().catch(console.error);
     }, [agreement.content, agreement.title, agreement.agreement_participants, hasSigned, signatureName]);
-
-
     const handleSignAgreement = async () => {
-        if (hasSigned)
-            return;
-
         if (!signatureName.trim()) {
             setError("Please type your name to sign");
             return;
@@ -304,6 +299,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
         setError(null);
 
         try {
+            // Remove redundant session check here
             const { error: updateError } = await supabase
                 .from('agreement_participants')
                 .update({
@@ -316,6 +312,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
 
             if (updateError) {
                 setError(`Failed to sign agreement: ${updateError.message}`);
+                return;
             }
 
             const updatedParticipants = agreement.agreement_participants.map(p =>
@@ -332,7 +329,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
     };
 
     return (
-        <div className="max-w-6xl mx-auto px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8">
+        <div className="max-w-6xl mx-auto px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 pt-32">
             <h1 className="text-white font-semibold mb-10 text-5xl text-center">
                 Agreement Review
             </h1>

@@ -18,11 +18,11 @@ export default function CreateAgreementPage({templates}: {templates: Template[]}
 
     if (!selectedTemplate) {
         return(
-            <div className="max-w-5xl mx-auto px-2">
+            <div className="max-w-5xl mx-auto px-2 py-32">
                 <h1 className="text-5xl font-bold text-white text-center">
                     Choose a Template
                 </h1>
-                <p className="mt-2 text-gray-400 text-center">
+                <p className="mt-2 mb-12 text-gray-400 text-center">
                     Select a base template for your agreement!
                 </p>
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -286,10 +286,9 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
         }
         setLoading(false)
     }
-
     return(
         <div className= "flex flex-col lg:flex-row gap-8 p-4">
-            <div className="w-full lg:w-1/2">
+            <div className="w-full lg:w-1/2 py-32 px-16">
                 <button onClick={onBack} className="text-indigo-400 hover:underline mb-4">
                     &larr; Back to templates
                 </button>
@@ -462,11 +461,22 @@ function AgreementForm({template, onBack}: {template: Template; onBack: () => vo
                     {error && <p className="text-red-500 text-center  mt-2">{error}</p>}
                 </form>
             </div>
-            <div className="w-full lg:w-1/2 h-[85vh] sticky top-24">
+            <div className="w-full lg:w-5/12 h-[85vh] sticky top-24 pt-16">
                 {pdfUrl ? (
-                    <iframe src={pdfUrl} width="100%" height="100%" style={{border:'gray', borderRadius:'8px'}} title="Agreement PDF Preview" />
+                    <div className="w-full h-full bg-[#0f0f0f] rounded-lg border border-[#262626] p-2">
+                        <iframe 
+                            src={`${pdfUrl}#zoom=fit&view=FitH`} 
+                            width="100%" 
+                            height="100%" 
+                            style={{
+                                border: 'none', 
+                                borderRadius: '6px',
+                            }} 
+                            title="Agreement PDF Preview" 
+                        />
+                    </div>
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#0f0f0f] rounded-lg border border-[#262626]">
+                    <div className="w-full h-full flex items-center justify-center bg-[#0f0f0f] rounded-lg border border-[#262626] mt-32">
                         <p className="text-gray-400">Updating the PDF</p>
                     </div>
                 )}

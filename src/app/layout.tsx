@@ -2,6 +2,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Inter } from "next/font/google";
 import { Footer } from "@/components/Footer";
+import { SessionProvider } from "@/contexts/SessionContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark">
       <body className={inter.className + " text-white "}>
-        <Navbar />
-        <div className="min-h-[80vh]">{children}</div>
-        <Footer />
+        <SessionProvider>
+          <Navbar />
+          <div className="min-h-[80vh]">{children}</div>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
