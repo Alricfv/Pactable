@@ -17,12 +17,16 @@ export type Template= {
     sections: TemplateSection[];
 };
 
-export default async function CreateAgreementPage(){
-    const supabase = createClient();
-    const user = requireUser();
+export const revalidate = 3600; // Revalidate every hour
+
+async function getTemplates() {
     const filePath = path.join(process.cwd(), 'src', 'lib', 'templates.json');
     const jsonData = await fs.readFile(filePath, 'utf-8');
-    const templates: Template[] = JSON.parse(jsonData);
+    return JSON.parse(jsonData);
+}
 
+export default async function CreateAgreementPage(){
+    // Templates don't change often, cache for longer
+    const templates = await getTemplates();
     return <ClientAgreementPage templates={templates} />;
 }

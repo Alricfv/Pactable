@@ -3,6 +3,7 @@
 import { FileText, PlusCircle, MoreVertical, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabaseClient';
+import { useAgreements, useDeleteAgreement } from '@/hooks/useAgreements'
 
 type Participant ={
     user_id: string;
@@ -49,114 +50,135 @@ const AgreementPreview = ({ title, content }: {title: string, content: string | 
     );
 };
 
-export default function DashboardClient({agreements: initialAgreements, userId} : {agreements: Agreement[], userId: string }) {
-    const [error, setError] = useState<string | null>(null);
-    const supabase = createClient();
-    const [agreements, setAgreements] = useState(initialAgreements);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [agreementToDelete, setAgreementToDelete] = useState<Agreement | null>(null);
+export default function DashboardClient({ 
+  agreements: initialAgreements, 
+  userId 
+}: { 
+  agreements: Agreement[]
+  userId: string 
+}) {
+  const [error, setError] = useState<string | null>(null);
+  const { data: agreements = initialAgreements, isLoading } = useAgreements(userId)
+  const deleteMutation = useDeleteAgreement()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [agreementToDelete, setAgreementToDelete] = useState<Agreement | null>(null);
+  
+  const handleDeleteAgreement = async (agreementId: string) => {
+    setError(null);
     
-    const handleDeleteAgreement = async (agreementId: string) => {
-        setError(null);
-        
-        // Remove session check here - let middleware handle it
-        const{ error: rpcError } = await supabase.rpc('delete_agreement',{
-             agreement_id: agreementId 
-        });
-
-        if (rpcError){
-            console.error('Failed to delete agreement:', rpcError);
-            setError(`Error: ${rpcError.message}`);
-        }
-        else{
-            setAgreements(currentAgreements => currentAgreements.filter(a => a.id !== agreementId));
-        }
+    try {
+      await deleteMutation.mutateAsync(agreementId)
+      setIsModalOpen(false)
+      setAgreementToDelete(null)
+    } catch (error: any) {
+      console.error('Failed to delete agreement:', error);
+      setError(`Error: ${error.message}`);
     }
+  }
 
-    const handleOpenModal = (agreement: Agreement) =>{
-        setAgreementToDelete(agreement);
-        setIsModalOpen(true);
-    };
+  const handleOpenModal = (agreement: Agreement) =>{
+      setAgreementToDelete(agreement);
+      setIsModalOpen(true);
+  };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setAgreementToDelete(null);
-    };
+  const handleCloseModal = () => {
+      setIsModalOpen(false);
+      setAgreementToDelete(null);
+  };
 
-    const handleConfirmDelete = () => {
-        if (agreementToDelete) {
-            handleDeleteAgreement(agreementToDelete.id);
-        }
-        handleCloseModal();
-    }
+  const handleConfirmDelete = () => {
+      if (agreementToDelete) {
+          handleDeleteAgreement(agreementToDelete.id);
+      }
+      handleCloseModal();
+  }
 
-    const createdAgreements = agreements.filter(a => a.created_by === userId);
-    const receivedAgreements = agreements.filter(a => a.created_by !== userId);
-    return(
-        <>
-            <ConfirmationModal
-                isOpen={isModalOpen}
-                onCancel={handleCloseModal}
-                onConfirm={handleConfirmDelete}
-                title={agreementToDelete?.title || ''}
-            />
+  const createdAgreements = agreements.filter(a => a.created_by === userId);
+  const receivedAgreements = agreements.filter(a => a.created_by !== userId);
 
-            <div className="w-full px-6 sm:px-10 min-h-screen py-32">
-                <div className="text-center mb-12">
-                    <h1 className="text-5xl font-bold text-white">
-                        Welcome to your Dashboard!
-                    </h1>
-                    <p className="mt-2 text-gray-300">
-                        Let&apos;s agree on stuff shall we?
-                    </p>
-                </div>
+  if (isLoading) {
+    return (
+      <div className="w-full px-6 sm:px-10 min-h-screen py-32">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-white">
+            Welcome to your Dashboard!
+          </h1>
+          <p className="mt-2 text-gray-300">
+            Let&apos;s agree on stuff shall we?
+          </p>
+        </div>
+        <div className="flex justify-center">
+          <div className="h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
 
-                {error && <p className="text-center bg-red-50 text-red-500 p-3 rounded-md">{error}</p>}
+  return(
+      <>
+          <ConfirmationModal
+              isOpen={isModalOpen}
+              onCancel={handleCloseModal}
+              onConfirm={handleConfirmDelete}
+              title={agreementToDelete?.title || ''}
+          />
 
-                {agreements.length > 0 ? (
-                    <div className="space-y-10">
-                        <div>
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-3xl font-semibold text-white mb-2">
-                                    Your Agreements
-                                </h2>
-                                <a
-                                    href="/dashboard/agreements/create"
-                                    className="inline-flex items-center gap-2 mb-4 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
-                                >
-                                    <PlusCircle size={20} />
-                                    <span> New Agreement </span>
-                                </a>
-                            </div>
-                            <AgreementGrid agreements={createdAgreements} onDelete={handleOpenModal}/>
-                        </div>
-                        <div>
-                            <h2 className="text-3xl font-semibold text-white mb-2">
-                                Received Agreements
-                            </h2>
-                            <AgreementGrid agreements={receivedAgreements} />
-                        </div>
-                    </div>
-                ) : (
-                    <div className="text-center py-16 px-6 bg-[#0f0f0f] rounded-lg border border-dashed border-[#262626]">
-                        <h3 className="text-xl font-semibold text-white">
-                            Get on your first agreement ASAP!
-                        </h3>
-                        <p className="">
-                            You haven&apos;t created / been added to agreements yet!
-                        </p>
-                        <a
-                            href="/dashboard/agreements/create"
-                            className="mt-6 inline-flex items-center gap-2 bg-gray-50 text-white rounded-md px-4 py-2 font-semibold hover:bg-gray-100 transition"
-                        >
-                            <PlusCircle size={18} className="text-gray-950" />
-                            <span className="text-gray-950">Create your first agreement here!</span>
-                        </a>
-                    </div>
-                )}
-            </div>
-        </>
-    );
+          <div className="w-full px-6 sm:px-10 min-h-screen py-32">
+              <div className="text-center mb-12">
+                  <h1 className="text-5xl font-bold text-white">
+                      Welcome to your Dashboard!
+                  </h1>
+                  <p className="mt-2 text-gray-300">
+                      Let&apos;s agree on stuff shall we?
+                  </p>
+              </div>
+
+              {error && <p className="text-center bg-red-50 text-red-500 p-3 rounded-md">{error}</p>}
+
+              {agreements.length > 0 ? (
+                  <div className="space-y-10">
+                      <div>
+                          <div className="flex justify-between items-center">
+                              <h2 className="text-3xl font-semibold text-white mb-2">
+                                  Your Agreements
+                              </h2>
+                              <a
+                                  href="/dashboard/agreements/create"
+                                  className="inline-flex items-center gap-2 mb-4 bg-gray-50 text-gray-950 rounded-md px-6 py-3 font-semibold hover:bg-gray-100 transition text-base"
+                              >
+                                  <PlusCircle size={20} />
+                                  <span> New Agreement </span>
+                              </a>
+                          </div>
+                          <AgreementGrid agreements={createdAgreements} onDelete={handleOpenModal}/>
+                      </div>
+                      <div>
+                          <h2 className="text-3xl font-semibold text-white mb-2">
+                              Received Agreements
+                          </h2>
+                          <AgreementGrid agreements={receivedAgreements} />
+                      </div>
+                  </div>
+              ) : (
+                  <div className="text-center py-16 px-6 bg-[#0f0f0f] rounded-lg border border-dashed border-[#262626]">
+                      <h3 className="text-xl font-semibold text-white">
+                          Get on your first agreement ASAP!
+                      </h3>
+                      <p className="">
+                          You haven&apos;t created / been added to agreements yet!
+                      </p>
+                      <a
+                          href="/dashboard/agreements/create"
+                          className="mt-6 inline-flex items-center gap-2 bg-gray-50 text-white rounded-md px-4 py-2 font-semibold hover:bg-gray-100 transition"
+                      >
+                          <PlusCircle size={18} className="text-gray-950" />
+                          <span className="text-gray-950">Create your first agreement here!</span>
+                      </a>
+                  </div>
+              )}
+          </div>
+      </>
+  );
 }
 
 function ConfirmationModal({isOpen, onCancel, onConfirm, title}:{isOpen: boolean; onCancel: () => void; onConfirm: ()=> void; title: string;}){

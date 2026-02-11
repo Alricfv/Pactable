@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabaseClient'
 import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import { UserCircle, Camera, Loader2, Check } from 'lucide-react'
+import { useUpdateProfile } from '@/hooks/useProfile'
 
 type Profile = {
     username: string | null
@@ -14,7 +15,7 @@ type Profile = {
 export default function ProfileForm({ user, profile }: { user: User; profile: Profile | null }){
     const supabase = createClient()
     const router = useRouter()
-    const [loading, setLoading] = useState(false)
+    const updateProfileMutation = useUpdateProfile()
     const [saveSuccess, setSaveSuccess] = useState(false)
     const [username, setUsername] = useState(profile?.username || '')
     const [avatarUrl, setAvatarUrl] =useState<string | null>(profile?.avatar_url || null)
@@ -86,36 +87,27 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
     }, [selectedFile])
 
     async function updateProfile(){
-        setLoading(true)
         setMessage(null)
         setSaveSuccess(false)
 
         try {
-            const { error } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: user.id,
+            await updateProfileMutation.mutateAsync({
+                userId: user.id,
+                updates: {
                     username,
-                    email: user.email,
                     avatar_url: avatarUrl
-                })
-
-            if (error) 
-                throw error
+                }
+            })
 
             setSaveSuccess(true)
 
             setTimeout(() => {
                 setSaveSuccess(false)
-            },3000);
+            }, 3000);
             
-            router.refresh()
         }
         catch (error:any){
             setMessage({ text: error.message || 'Error updating the profile', type: 'error' })
-        }
-        finally {
-            setLoading(false)
         }
     }
 
@@ -205,9 +197,9 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
                     <button
                         onClick={updateProfile}
                         className={`w-full ${saveSuccess ? 'bg-green-500 hover:bg-green-600' : 'bg-indigo-500 hover:bg-indigo-600'} text-gray-50 rounded-md px-4 py-3 font-semibold transition-colors disabled:bg-indigo-400`}
-                        disabled={loading}
+                        disabled={updateProfileMutation.isPending}
                     >
-                        {loading ? 'Saving...' : (saveSuccess ? 'Saved Successfully!' :'Update Profile')}
+                        {updateProfileMutation.isPending ? 'Saving...' : (saveSuccess ? 'Saved Successfully!' :'Update Profile')}
                     </button>
                     <button
                         onClick={handleSignOut}

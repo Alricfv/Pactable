@@ -6,7 +6,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { createClient } from '@/lib/supabaseClient'
 import { usePathname, useRouter } from 'next/navigation'
 import { UserCircle } from 'lucide-react';
-import { useSessionContext } from '@/contexts/SessionContext';
+import { useSessionContext } from '@/contexts/SessionContext'
+import { useProfile } from '@/hooks/useProfile'
 
 const dashboardNavigation = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -23,49 +24,15 @@ const publicNavigation = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [profile, setProfile] = useState<any>(null)
-  const [profileLoading, setProfileLoading] = useState(true)
   const supabase = createClient()
   const router = useRouter()
   const pathname = usePathname()
   const isProtectedRoute = pathname.startsWith('/dashboard')
   const navigation = isProtectedRoute ? dashboardNavigation : publicNavigation
   const { user, loading: sessionLoading } = useSessionContext()
-
-  useEffect(() => {
-    if (!isProtectedRoute) {
-      setProfile(null)
-      setProfileLoading(false)
-      return
-    }
-
-    if (!user) {
-      setProfile(null)
-      setProfileLoading(false)
-      return
-    }
-
-    let active = true
-    const loadProfile = async () => {
-      setProfileLoading(true)
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar_url')
-        .eq('id', user.id)
-        .single()
-      if (!active) return
-      if (!error) {
-        setProfile(data)
-      }
-      setProfileLoading(false)
-    }
-
-    loadProfile()
-
-    return () => {
-      active = false
-    }
-  }, [isProtectedRoute, supabase, user?.id])
+  const { data: profile, isLoading: profileLoading } = useProfile(user?.id || '')
+  
+  const loading = sessionLoading || profileLoading
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -106,7 +73,7 @@ export function Navbar() {
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isProtectedRoute ? (
-            sessionLoading || profileLoading ? (
+            loading ? (
               <div className="h-10 w-10 bg-neutral-800 rounded-full animate-pulse" />
             ) : (
               <div className="relative group">
