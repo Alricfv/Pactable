@@ -24,8 +24,8 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={inter.className + " text-white "}>
+    <html lang="en">
+      <body className={inter.className}>
         <QueryProvider>
           <SessionProvider>
             <Navbar />

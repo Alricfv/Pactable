@@ -1,8 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabaseClient'
+import { getFromStorage, persistToStorage } from '@/lib/requestThrottle'
 
-export function useProfile(userId: string) {
-  const supabase = createClient()
+const supabase = createClient()
+
+// Cache TTL: 2 hours for localStorage persistence
+const STORAGE_TTL = 2 * 60 * 60 * 1000
+
+export type Profile = {
+  username: string | null
+  email: string | null
+  avatar_url: string | null
+}
+
+export function useProfile(userId: string | undefined) {
+  // Check if we have cached data upfront
+  const cachedData = userId ? getFromStorage<Profile>(`profile_${userId}`) : null
   
   return useQuery({
     queryKey: ['profile', userId],
@@ -15,20 +28,36 @@ export function useProfile(userId: string) {
         .eq('id', userId)
         .single()
       
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      if (error && error.code !== 'PGRST116') {
         throw error
+      }
+      
+      // Persist to localStorage
+      if (data) {
+        persistToStorage(`profile_${userId}`, data, STORAGE_TTL)
       }
       
       return data
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes - profiles don't change often
-    enabled: !!userId, // Only run query if userId exists
+    // Use localStorage as initial data (convert null to undefined for React Query)
+    initialData: cachedData ?? undefined,
+    staleTime: 60 * 60 * 1000, // 1 hour
+    gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    enabled: !!userId,
+    refetchOnWindowFocus: false,
+    // Always refetch on mount for fresh data (but show cached instantly)
+    refetchOnMount: 'always',
+    refetchOnReconnect: false,
+    retry: (failureCount, error: any) => {
+      if (error?.status === 429) return false
+      return failureCount < 2
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   })
 }
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient()
-  const supabase = createClient()
   
   return useMutation({
     mutationFn: async ({ userId, updates }: { 
@@ -48,10 +77,8 @@ export function useUpdateProfile() {
       return data
     },
     onSuccess: (data, variables) => {
-      // Update cache immediately
+      // Update cache immediately without refetching
       queryClient.setQueryData(['profile', variables.userId], data)
-      // Invalidate to refetch and sync
-      queryClient.invalidateQueries({ queryKey: ['profile', variables.userId] })
     }
   })
 }

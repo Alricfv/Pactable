@@ -1,7 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/lib/supabaseClient'
-import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import { UserCircle, Camera, Loader2, Check } from 'lucide-react'
 import { useUpdateProfile } from '@/hooks/useProfile'
@@ -12,7 +11,12 @@ type Profile = {
     avatar_url: string | null
 }
 
-export default function ProfileForm({ user, profile }: { user: User; profile: Profile | null }){
+type UserInfo = {
+    id: string
+    email: string
+}
+
+export default function ProfileForm({ user, profile }: { user: UserInfo; profile: Profile | null }){
     const supabase = createClient()
     const router = useRouter()
     const updateProfileMutation = useUpdateProfile()
@@ -95,7 +99,7 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
                 userId: user.id,
                 updates: {
                     username,
-                    avatar_url: avatarUrl
+                    avatar_url: avatarUrl || undefined
                 }
             })
 
@@ -117,15 +121,15 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
     }
 
     return(
-        <div className="max-w-2xl py-32 mx-auto p-4 ">
-            <div className="text-5xl text-center font-bold text-white mb-6">
+        <div className="max-w-2xl py-32 mx-auto p-4 bg-white min-h-screen">
+            <div className="text-5xl text-center font-bold text-gray-900 mb-6">
                 Your Profile
             </div>
-            <div className="space-y-6 bg-[#0f0f0f] p-8 rounded-lg border border-[#262626]">
+            <div className="space-y-6 bg-gray-50 p-8 rounded-lg border border-gray-200">
                 <div className="flex flex-col items-center">
                     <div className="relative h-32 w-32 cursor-pointer group" onClick={handleAvatarClick}>
                         {(previewUrl || avatarUrl) ? (
-                            <div className="h-32 w-32 rounded-full overflow-hidden border-2 border-gray-50">
+                            <div className="h-32 w-32 rounded-full overflow-hidden border-2 border-gray-900">
                                 <img
                                     src={previewUrl || avatarUrl || ''}
                                     alt="Avatar"
@@ -136,24 +140,24 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
                                 />
                             </div>
                         ) : (
-                            <div className="h-32 w-32 rounded-full bg-[#1a1a1a] flex items-center justify-center border-2 border-dashed border-gray-50">
+                            <div className="h-32 w-32 rounded-full bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-400">
                                 <UserCircle className="h-20 w-20 text-gray-400"/>
                             </div>
                         )}
 
-                        <div className="absolute inset-0 bg-slate-900 bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Camera className= "h-8 w-8 text-gray-50"/>
+                        <div className="absolute inset-0 bg-gray-900 bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Camera className= "h-8 w-8 text-white"/>
                         </div>
 
                         {uploading && (
-                            <div className="absolute inset-0 bg-slate-900 bg-opacity-70 rounded-full flex items-center justify-center">
-                                <Loader2 className="h-8 w-8 text-gray-50 animate-spin"/>
+                            <div className="absolute inset-0 bg-gray-900 bg-opacity-70 rounded-full flex items-center justify-center">
+                                <Loader2 className="h-8 w-8 text-white animate-spin"/>
                             </div>
                         )}
 
                         {previewUrl && !uploading && (
                             <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-1">
-                                <Check className="h-5 w-5 text-gray-50"/>
+                                <Check className="h-5 w-5 text-white"/>
                             </div>
                         )}
                     </div>
@@ -164,12 +168,12 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
                         accept="image/*"
                         className="hidden"
                     />
-                    <p className="text-sm text-gray-400 mt-2">
+                    <p className="text-sm text-gray-500 mt-2">
                         Click to upload a profile picture
                     </p>
                 </div>
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-400">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-500">
                         Email
                     </label>
                     <input
@@ -177,12 +181,12 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
                         type="text"
                         value={user.email || ''}
                         disabled
-                        className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-gray-500"
+                        className="mt-1 block w-full bg-gray-100 rounded-md border-gray-300 border p-2 text-gray-500"
                     />
                     
                 </div>
                 <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-gray-300">
+                    <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                         Username
                     </label>
                     <input
@@ -190,27 +194,27 @@ export default function ProfileForm({ user, profile }: { user: User; profile: Pr
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-gray-50"
+                        className="mt-1 block w-full bg-white rounded-md border-gray-300 border p-2 text-gray-900"
                     />
                 </div>
                 <div className="space-y-3">
                     <button
                         onClick={updateProfile}
-                        className={`w-full ${saveSuccess ? 'bg-green-500 hover:bg-green-600' : 'bg-indigo-500 hover:bg-indigo-600'} text-gray-50 rounded-md px-4 py-3 font-semibold transition-colors disabled:bg-indigo-400`}
+                        className={`w-full ${saveSuccess ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-900 hover:bg-gray-800'} text-white rounded-md px-4 py-3 font-semibold transition-colors disabled:bg-gray-400`}
                         disabled={updateProfileMutation.isPending}
                     >
                         {updateProfileMutation.isPending ? 'Saving...' : (saveSuccess ? 'Saved Successfully!' :'Update Profile')}
                     </button>
                     <button
                         onClick={handleSignOut}
-                        className="w-full bg-red-500 text-gray-50 rounded-md px-4 py-3 font-semibold hover:bg-red-600"
+                        className="w-full bg-red-500 text-white rounded-md px-4 py-3 font-semibold hover:bg-red-600"
                     >
                         Sign Out
                     </button>
                 </div>
                 {message && (
                     <div className={`text-center text-sm p-2 rounded ${
-                        message.type === 'success' ? 'text-green-400' : 'text-red-500'
+                        message.type === 'success' ? 'text-green-600' : 'text-red-600'
                     }`}>
                         {message.text}
                     </div>

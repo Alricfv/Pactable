@@ -359,15 +359,15 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
 
     if (isLocked) {
         return (
-            <div className="max-w-4xl mx-auto text-center p-8">
-                <AlertTriangle className="mx-auto h-12 w-12 text-yellow-400" />
-                <h2 className="mt-4 text-2xl font-semibold text-white">Agreement Locked</h2>
-                <p className="mt-2 text-gray-400">
+            <div className="max-w-4xl mx-auto text-center p-8 bg-white min-h-screen">
+                <AlertTriangle className="mx-auto h-12 w-12 text-yellow-500" />
+                <h2 className="mt-4 text-2xl font-semibold text-gray-900">Agreement Locked</h2>
+                <p className="mt-2 text-gray-600">
                     This agreement cannot be edited because one or more participants have already signed it.
                 </p>
                 <a
                     href={`/dashboard/agreements/view/${agreement.id}`}
-                    className="mt-6 inline-block text-indigo-400 hover:underline"
+                    className="mt-6 inline-block text-indigo-600 hover:underline"
                 >
                     &larr; View Agreement
                 </a>
@@ -377,32 +377,32 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
     
 
     return(
-        <div className="flex flex-col lg:flex-row gap-8 p-4">
+        <div className="flex flex-col lg:flex-row gap-8 p-4 bg-white min-h-screen">
             <div className="w-full lg:w-1/2">
                 <a
                     href={`/dashboard/agreements/view/${agreement.id}`} 
-                    className="text-white hover:underline mb-4 inline-block"
+                    className="text-indigo-600 hover:underline mb-4 inline-block"
                 >
                     &larr; Back to Agreements
                 </a>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-bold text-gray-900">
                     Edit Agreement
                 </h1>
-                <div className="bg-amber-900/20 border border-amber-500 rounded-lg p-4 mt-4 mb-6">
-                    <div className="flex items-center gap-2 text-amber-400">
+                <div className="bg-amber-50 border border-amber-400 rounded-lg p-4 mt-4 mb-6">
+                    <div className="flex items-center gap-2 text-amber-600">
                         <AlertTriangle size={20}/>
                         <p className="font-semibold">
                             Warning
                         </p>
                     </div>
-                    <p className="text-sm text-amber-200 mt-1">
+                    <p className="text-sm text-amber-700 mt-1">
                         Editing this agreement will reset all the signature statuses of the participants to &quot;pending&quot;. Ask them to sign again!
                     </p>
                 </div>
 
                 <form onSubmit={handleUpdateAgreement} className="mt-6 space-y-6 max-w-3xl">
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-gray-300">
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                             Agreement Title
                         </label>
                         <input
@@ -410,12 +410,12 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="mt-1 block w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
+                            className="mt-1 block w-full bg-white rounded-md border-gray-300 border p-2 text-gray-900"
                             required
                         />
                     </div>
                     <div>
-                        <h2 className="text-lg font-medium text-gray-200 mb-2">
+                        <h2 className="text-lg font-medium text-gray-800 mb-2">
                             Agreement Sections
                         </h2>
                         <DndContext
@@ -442,13 +442,13 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         <button
                             type="button"
                             onClick={handleAddSection}
-                            className="mt-4 flex items-center gap-2 text-white hover:underline"
+                            className="mt-4 flex items-center gap-2 text-indigo-600 hover:underline"
                         >
                             <PlusCircle size={16}/> Add Section
                         </button>
                     </div>
                     <div className="space-y-3">
-                        <label className="block text-sm font-medium text-gray-300">
+                        <label className="block text-sm font-medium text-gray-700">
                             Company Logo (Optional)
                         </label>
                         <input
@@ -460,7 +460,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         />
                         
                         {logoUrl ? (
-                            <div className="relative w-40 h-24 mb-4 bg-white rounded-md p-2 flex items-center justify-center">
+                            <div className="relative w-40 h-24 mb-4 bg-gray-100 rounded-md p-2 flex items-center justify-center border border-gray-200">
                                 <img 
                                     src={logoUrl} 
                                     alt="Company Logo" 
@@ -478,7 +478,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                             <button
                                 type="button"
                                 onClick={handleLogoClick}
-                                className="flex items-center gap-2 bg-[#1a1a1a] border border-[#262626] text-gray-300 px-4 py-2 rounded-md hover:border-gray-500"
+                                className="flex items-center gap-2 bg-gray-50 border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:border-gray-400"
                             >
                                 <PlusCircle size={16} />
                                 Upload Logo
@@ -487,28 +487,28 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         
                         {logoUrl && (
                             <div className="mt-3">
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Logo Position
                                 </label>
                                 <div className="grid grid-cols-3 gap-2">
                                     <button
                                         type="button"
                                         onClick={() => setLogoPosition('top-left')}
-                                        className={`p-2 border rounded-md ${logoPosition === 'top-left' ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700'}`}
+                                        className={`p-2 border rounded-md text-gray-700 ${logoPosition === 'top-left' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'}`}
                                     >
                                         Top Left
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setLogoPosition('top-right')}
-                                        className={`p-2 border rounded-md ${logoPosition === 'top-right' ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700'}`}
+                                        className={`p-2 border rounded-md text-gray-700 ${logoPosition === 'top-right' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'}`}
                                     >
                                         Top Right
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setLogoPosition('above-title')}
-                                        className={`p-2 border rounded-md ${logoPosition === 'above-title' ? 'border-indigo-500 bg-indigo-900/20' : 'border-gray-700'}`}
+                                        className={`p-2 border rounded-md text-gray-700 ${logoPosition === 'above-title' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'}`}
                                     >
                                         Above Title
                                     </button>
@@ -517,7 +517,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         )}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-300">
+                        <label className="block text-sm font-medium text-gray-700">
                             Participants
                         </label>
                         <p className="text-xs text-gray-500 mb-2">
@@ -531,14 +531,14 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                                         placeholder={`participant-${index + 1}@example.com`}
                                         value={email}
                                         onChange={(e) => handleParticipantChange(index, e.target.value)}
-                                        className="block-w-full bg-[#000000] rounded-md border-[#262626] border p-2 text-white"
+                                        className="block-w-full bg-white rounded-md border-gray-300 border p-2 text-gray-900"
                                         required
                                     />
                                     {participants.length > 1 && (
                                         <button
                                             type="button"
                                             onClick={() => removeParticipant(index)}
-                                            className="w-9 h-9 flex items-center text-gray-950 justify-center rounded-md bg-red-500 hover:bg-red-600"
+                                            className="w-9 h-9 flex items-center text-white justify-center rounded-md bg-red-500 hover:bg-red-600"
                                         >
                                             <Trash2 size={16}/>
                                         </button>
@@ -549,7 +549,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         <button
                             type="button"
                             onClick={addParticipant}
-                            className="mt-2 flex items-center text-lg text-white hover:underline"
+                            className="mt-2 flex items-center text-lg text-indigo-600 hover:underline"
                         >
                             <PlusCircle size={18}/><p className="ml-2">Add Participant</p>
                         </button>
@@ -576,7 +576,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         title="Agreement PDF Preview"
                     />
                 ):(
-                    <div className="w-full h-full flex items-center justify-center bg-[#0f0f0f] rounded-lg border border-[#262626]">
+                    <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg border border-gray-200">
                         <p className="text-gray-500">
                             Updating the PDF...
                         </p>
@@ -602,18 +602,18 @@ function SortableSection({ section, onUpdate, onDelete }: { section: Section, on
 
     if (isEditing) {
         return (
-            <div ref={setNodeRef} style={style} className="p-4 bg-[#1a1a1a] rounded-lg border border-indigo-500 space-y-3">
+            <div ref={setNodeRef} style={style} className="p-4 bg-white rounded-lg border border-indigo-500 space-y-3 shadow-sm">
                 <input
                     type="text"
                     value={editedTitle}
                     onChange={(e) => setEditedTitle(e.target.value)}
-                    className="w-full bg-[#000000] rounded-md p-2 text-white font-semibold"
+                    className="w-full bg-white rounded-md p-2 text-gray-900 font-semibold border border-gray-300"
                 />
                 <textarea
                     value={editedTerms}
                     onChange={(e) => setEditedTerms(e.target.value)}
                     rows={5}
-                    className="w-full bg-[#000000] rounded-md p-2 text-white text-sm"
+                    className="w-full bg-white rounded-md p-2 text-gray-900 text-sm border border-gray-300"
                 />
                 <div className="flex gap-2">
                     <button
@@ -626,7 +626,7 @@ function SortableSection({ section, onUpdate, onDelete }: { section: Section, on
                     <button
                         type="button"
                         onClick={() => setIsEditing(false)}
-                        className="bg-gray-600 text-white px-3 py-1 rounded-md text-sm"
+                        className="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm"
                     >
                         Cancel
                     </button>
@@ -639,21 +639,21 @@ function SortableSection({ section, onUpdate, onDelete }: { section: Section, on
         <div
             ref={setNodeRef}
             style={style}
-            className="flex items-start gap-3 p-4 bg-[#0f0f0f] rounded-lg border border-[#262626] transition hover:scale-[1.02] hover:shadow-[0_0_16px_2px_rgba(255,255,255,0.32)]"
+            className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 transition hover:scale-[1.02] hover:shadow-md"
         >
             <button
                 type="button"
                 {...attributes}
                 {...listeners}
-                className="cursor-grab text-gray-500 hover:text-white pt-1"
+                className="cursor-grab text-gray-400 hover:text-gray-600 pt-1"
             >
                 <GripVertical size={20} />
             </button>
             <div className="flex-grow">
-                <h3 className="font-semibold text-white">{section.title}</h3>
+                <h3 className="font-semibold text-gray-900">{section.title}</h3>
                 <div className="mt-2 space-y-1">
                     {section.terms.map((term, index) => (
-                        <p key={index} className="text-sm text-gray-400">• {term}</p>
+                        <p key={index} className="text-sm text-gray-600">• {term}</p>
                     ))}
                 </div>
             </div>
@@ -661,14 +661,14 @@ function SortableSection({ section, onUpdate, onDelete }: { section: Section, on
                 <button
                     type="button"
                     onClick={() => setIsEditing(true)}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-500 hover:text-gray-700"
                 >
                     <Pencil size={16} />
                 </button>
                 <button
                     type="button"
                     onClick={() => onDelete(section.id)}
-                    className="w-7 h-7 flex items-center text-gray-950 justify-center rounded-md bg-red-200 hover:bg-red-600"
+                    className="w-7 h-7 flex items-center text-white justify-center rounded-md bg-red-500 hover:bg-red-600"
                 >
                     <Trash2 size={16} />
                 </button>

@@ -58,12 +58,12 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md space-y-6 bg-[#0f0f0f] rounded-xl p-8">
-        <h2 className="text-2xl font-bold text-center mb-2">Sign Up</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-md space-y-6 bg-white border border-gray-300 rounded-xl p-8 shadow-sm">
+        <h2 className="text-2xl font-bold text-center mb-2 text-gray-900">Sign Up</h2>
         <form onSubmit={handleSignUp} className="space-y-4">
           <input
-            className="bg-[#000000] rounded px-3 py-2 text-white w-full"
+            className="bg-white rounded-md px-3 py-2 text-gray-900 w-full border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
@@ -72,7 +72,7 @@ export default function SignUpPage() {
             disabled={isLoading}
           />
           <input
-            className="bg-[#000000] rounded px-3 py-2 text-white w-full"
+            className="bg-white rounded-md px-3 py-2 text-gray-900 w-full border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
@@ -81,7 +81,7 @@ export default function SignUpPage() {
             disabled={isLoading}
           />
           <input
-            className="bg-[#000000] rounded px-3 py-2 text-white w-full"
+            className="bg-white rounded-md px-3 py-2 text-gray-900 w-full border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
@@ -91,18 +91,18 @@ export default function SignUpPage() {
           />
           <button
             type="submit"
-            className="bg-white text-black rounded px-3 py-2 w-full"
+            className="bg-indigo-600 text-white rounded-md px-3 py-2 w-full font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
             disabled={isLoading}
           >
             {isLoading ? 'Processing...' : 'Continue'}
           </button>
-          {error && <div className="text-red-500 text-center text-lg">{error}</div>}
-          {success && <div className="text-green-500 text-center text-lg">{success}</div>}
-          <p className = "text-center text-gray-400 text-sm mt-4">
+          {error && <div className="text-red-500 text-center text-sm">{error}</div>}
+          {success && <div className="text-green-600 text-center text-sm">{success}</div>}
+          <p className="text-center text-gray-500 text-sm mt-4">
             Already have an account?{' '}
-                <a href="/signin" className="text-indigo-400 underline">
-                    Sign In
-                </a>
+            <a href="/signin" className="text-indigo-600 hover:text-indigo-700 font-medium">
+              Sign In
+            </a>
           </p>
         </form>
       </div>

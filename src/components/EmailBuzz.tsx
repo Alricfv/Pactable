@@ -19,13 +19,15 @@ export function EmailBuzz() {
   }
 
   return (
-    <div id="subscribe" className="bg-background py-16 sm:py-32 border-t border-neutral-900/50">
+    <div id="subscribe" className="bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-2xl px-6 text-center">
-        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-[0.2em] mb-4">Updates</p>
-        <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-stone-100 text-stone-600 text-sm font-medium mb-4">
+          Stay Updated
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 mb-4">
           Get notified about new features
         </h2>
-        <p className="text-neutral-500 mb-10 max-w-md mx-auto leading-relaxed">
+        <p className="text-stone-500 mb-8 max-w-md mx-auto leading-relaxed">
           Join our waitlist for early access to new templates and features. No spam, just progress.
         </p>
 
@@ -37,20 +39,20 @@ export function EmailBuzz() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
             disabled={isSubmitted}
-            className="flex-1 h-12 px-4 rounded-xl bg-neutral-900/50 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-700 focus:bg-neutral-900 transition-all duration-300 disabled:opacity-50"
+            className="flex-1 h-12 px-5 rounded-full bg-stone-50 border border-stone-300 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={isLoading || isSubmitted}
-            className={`h-12 px-8 rounded-xl font-medium transition-all duration-300 active:scale-95 ${isSubmitted
-              ? "bg-emerald-600/20 text-emerald-400 border border-emerald-500/20"
-              : "bg-white text-black hover:bg-neutral-200"
+            className={`h-12 px-8 rounded-full font-semibold transition-all ${isSubmitted
+              ? "bg-green-100 text-green-700 border border-green-200"
+              : "bg-stone-900 text-white hover:bg-stone-800"
               } disabled:cursor-not-allowed`}
           >
             {isLoading ? (
-              <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : isSubmitted ? (
-              "Done ✓"
+              "Subscribed ✓"
             ) : (
               "Subscribe"
             )}
