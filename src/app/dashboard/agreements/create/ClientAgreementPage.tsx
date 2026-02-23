@@ -937,9 +937,7 @@ export default function ClientAgreementPage() {
 
       if (agreementError) throw agreementError;
 
-      // Note: The agreement_participants table expects user_id (uuid), not name/email
-      // For now, we'll add the creator as a participant
-      // TODO: Implement proper participant invitation flow where users can be looked up by email
+      // Add the creator as a participant
       const { error: participantsError } = await supabase
         .from('agreement_participants')
         .insert({
@@ -948,8 +946,21 @@ export default function ClientAgreementPage() {
           role: 'creator',
           status: 'Signed',
         });
-      
+
       if (participantsError) console.warn('Failed to save participant:', participantsError);
+
+      // Add other contract parties as participants by their emails
+      const otherPartyEmails = contract.parties
+        .map(p => p.email?.trim().toLowerCase())
+        .filter((email): email is string => !!email && email !== user.email?.toLowerCase());
+
+      if (otherPartyEmails.length > 0) {
+        const { error: addParticipantsError } = await supabase.rpc('add_participants_to_agreement', {
+          p_agreement_id: agreement.id,
+          participant_emails: otherPartyEmails,
+        });
+        if (addParticipantsError) console.warn('Failed to add participants:', addParticipantsError);
+      }
 
       router.push(`/dashboard/agreements/view/${agreement.id}`);
     } catch (err) {

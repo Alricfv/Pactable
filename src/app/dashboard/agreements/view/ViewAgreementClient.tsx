@@ -39,8 +39,16 @@ function parseContract(content: string | null): Contract | null {
     } catch { return null; }
 }
 
+// Helper to find a signed participant matching a contract party by email
+function findSignedParticipant(party: Contract['parties'][0], participants: Participant[]): Participant | undefined {
+    if (!party.email) return undefined;
+    return participants.find(
+        p => p.status === 'signed' && p.profiles?.email?.toLowerCase() === party.email.toLowerCase()
+    );
+}
+
 // Contract Preview - matches create page's LiveContractPreview exactly
-function ContractPreview({ contract }: { contract: Contract }) {
+function ContractPreview({ contract, participants }: { contract: Contract; participants: Participant[] }) {
     return (
         <div className="bg-white border-2 border-gray-300 rounded-xl shadow-md flex flex-col h-[calc(100vh-220px)] sticky top-[180px]">
             <div className="px-6 py-3 border-b-2 border-gray-300 flex items-center justify-between bg-gray-50 rounded-t-xl">
@@ -117,14 +125,28 @@ function ContractPreview({ contract }: { contract: Contract }) {
                     {contract.parties.length === 0 ? (
                         <p className="text-gray-300 italic text-[12px]">No signature lines yet...</p>
                     ) : (
-                        contract.parties.map((party) => (
-                            <div key={party.id} className="mb-4">
-                                <p className="text-[11px] font-semibold uppercase text-gray-500">{PARTY_ROLE_LABELS[party.role]}</p>
-                                <div className="mt-2 border-b border-gray-300 w-48" />
-                                <p className="text-[11px] mt-1">{party.name || '________________________'}</p>
-                                <p className="text-[11px] text-gray-400">Date: ________________________</p>
-                            </div>
-                        ))
+                        contract.parties.map((party) => {
+                            const signedParticipant = findSignedParticipant(party, participants);
+                            return (
+                                <div key={party.id} className="mb-4">
+                                    <p className="text-[11px] font-semibold uppercase text-gray-500">{PARTY_ROLE_LABELS[party.role]}</p>
+                                    {signedParticipant?.signature_text ? (
+                                        <>
+                                            <p className="text-[15px] mt-2" style={{ fontFamily: 'cursive' }}>{signedParticipant.signature_text}</p>
+                                            <div className="border-b border-gray-300 w-48" />
+                                        </>
+                                    ) : (
+                                        <div className="mt-2 border-b border-gray-300 w-48" />
+                                    )}
+                                    <p className="text-[11px] mt-1">{party.name || '________________________'}</p>
+                                    <p className="text-[11px] text-gray-400">
+                                        Date: {signedParticipant?.signed_date
+                                            ? new Date(signedParticipant.signed_date).toLocaleDateString()
+                                            : '________________________'}
+                                    </p>
+                                </div>
+                            );
+                        })
                     )}
                 </div>
             </div>
@@ -299,11 +321,15 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
         addSpace(3);
 
         for (const party of contract.parties) {
+            const signedParticipant = findSignedParticipant(party, agreement.agreement_participants);
             addText(`${PARTY_ROLE_LABELS[party.role].toUpperCase()}:`, { bold: true });
             addSpace(2);
+            if (signedParticipant?.signature_text) {
+                addText(signedParticipant.signature_text, { size: 14 });
+            }
             addText('_________________________________');
             addText(`Name: ${party.name || '________________________'}`);
-            addText('Date: ________________________');
+            addText(`Date: ${signedParticipant?.signed_date ? new Date(signedParticipant.signed_date).toLocaleDateString() : '________________________'}`);
             addSpace(2);
         }
 
@@ -569,7 +595,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                     {/* Right side - Document Preview (same as create page) */}
                     <div className="lg:col-span-3">
                         {contract ? (
-                            <ContractPreview contract={contract} />
+                            <ContractPreview contract={contract} participants={agreement.agreement_participants} />
                         ) : agreement.content ? (
                             <PlainTextPreview content={agreement.content} title={agreement.title} />
                         ) : (

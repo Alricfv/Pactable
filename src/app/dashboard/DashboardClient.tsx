@@ -24,6 +24,51 @@ const AgreementPreview = ({ title, content }: {title: string, content: string | 
         return <FileText className="h-16 w-16 text-gray-500 group-hover:text-grey-50 transition" />;
     }
 
+    // Try parsing as JSON contract
+    try {
+        const parsed = JSON.parse(content);
+        if (parsed.title && parsed.articles) {
+            return (
+                <div className="w-full h-full bg-white p-3 overflow-hidden text-black font-sans text-[4px] leading-tight">
+                    <h1 className="font-bold text-[6px] mb-1 truncate text-center uppercase">
+                        {parsed.title}
+                    </h1>
+                    {parsed.preamble?.date && (
+                        <p className="text-[3px] text-gray-400 text-center mb-1">Date: {parsed.preamble.date}</p>
+                    )}
+                    <hr className="my-1 border-gray-200" />
+                    {parsed.preamble?.introText && (
+                        <p className="truncate text-[3.5px] mb-1">{parsed.preamble.introText}</p>
+                    )}
+                    {parsed.parties?.length > 0 && (
+                        <div className="mb-1">
+                            <p className="font-bold text-[4px] mb-0.5">PARTIES</p>
+                            {parsed.parties.slice(0, 3).map((party: any, i: number) => (
+                                <p key={i} className="truncate text-[3.5px]">
+                                    {i + 1}. {party.name || '[Name]'}{party.companyName ? ` (${party.companyName})` : ''}
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                    {parsed.articles?.slice(0, 4).map((article: any, i: number) => (
+                        <div key={i} className="mb-0.5">
+                            <p className="font-bold text-[4px] truncate">
+                                Art. {article.number}: {article.title}
+                            </p>
+                            {article.clauses?.slice(0, 2).map((clause: any, j: number) => (
+                                <p key={j} className="truncate text-[3.5px] ml-1">
+                                    {clause.number} {clause.title}
+                                </p>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+    } catch {
+        // Not JSON, fall through to plain text preview
+    }
+
     const lines = content.split('\n').filter(line => line.trim() !== '');
 
     return (
@@ -36,7 +81,7 @@ const AgreementPreview = ({ title, content }: {title: string, content: string | 
                     return (
                     <p key={index} className="font-bold mt-2 mb-1 text-[5px] border-b truncate">
                         {line.substring(4)}
-                    </p>  
+                    </p>
                 )}
                 if(line.startsWith('- ')){
                     return(
