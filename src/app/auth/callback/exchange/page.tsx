@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabaseClient'
 
-export default function ExchangePage() {
+function ExchangeContent() {
   const [status, setStatus] = useState('Completing sign in...')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -100,5 +100,13 @@ export default function ExchangePage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ExchangePage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <ExchangeContent />
+    </Suspense>
   )
 }

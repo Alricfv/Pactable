@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button"
 import { FeatureSection } from "@/components/FeatureSection"
 import { EmailBuzz } from "@/components/EmailBuzz"
@@ -56,10 +57,10 @@ export default function Home() {
           
           {/* Screenshot Container */}
           <div className="relative rounded-2xl overflow-hidden border border-stone-200 shadow-2xl shadow-stone-300/50 bg-white">
-            <img
+            <Image
               src="https://raw.githubusercontent.com/Alricfv/imageassets/refs/heads/main/Screenshot%202025-09-07%20201813.png"
               alt="Pactable dashboard"
-              className="w-full"
+              className="w-full h-auto"
               width={1200}
               height={800}
             />

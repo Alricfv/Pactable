@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { createClient } from '@/lib/supabaseClient';
 import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, UserCircle, Pencil, Lock, Download } from 'lucide-react';
@@ -478,7 +479,7 @@ export default function ViewAgreementClient({ agreement: initialAgreement, userI
                                         <div key={p.user_id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                                             <div className="flex items-center gap-3">
                                                 {p.profiles?.avatar_url ? (
-                                                    <img src={p.profiles.avatar_url} alt="avatar" className="h-10 w-10 rounded-full border border-gray-300" />
+                                                    <Image src={p.profiles.avatar_url} alt="avatar" width={40} height={40} className="h-10 w-10 rounded-full border border-gray-300" />
                                                 ) : (
                                                     <UserCircle className="h-10 w-10 text-gray-400" />
                                                 )}

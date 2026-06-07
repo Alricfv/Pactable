@@ -1,5 +1,6 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 import { UserCircle, Camera, Loader2, Check } from 'lucide-react'
@@ -48,7 +49,7 @@ export default function ProfileForm({ user, profile }: { user: UserInfo; profile
         fileInputRef.current?.click()
     }
 
-    const uploadAvatar = async() => {
+    const uploadAvatar = useCallback(async() => {
         if(!selectedFile  || !user)
             return
 
@@ -82,13 +83,13 @@ export default function ProfileForm({ user, profile }: { user: UserInfo; profile
         finally {
             setUploading(false)
         }
-    }
+    }, [selectedFile, user, supabase]);
 
     useEffect(() => {
         if (selectedFile){
             uploadAvatar()
         }
-    }, [selectedFile])
+    }, [selectedFile, uploadAvatar])
 
     async function updateProfile(){
         setMessage(null)
@@ -129,11 +130,12 @@ export default function ProfileForm({ user, profile }: { user: UserInfo; profile
                 <div className="flex flex-col items-center">
                     <div className="relative h-32 w-32 cursor-pointer group" onClick={handleAvatarClick}>
                         {(previewUrl || avatarUrl) ? (
-                            <div className="h-32 w-32 rounded-full overflow-hidden border-2 border-gray-900">
-                                <img
+                            <div className="h-32 w-32 rounded-full overflow-hidden border-2 border-gray-900 relative">
+                                <Image
                                     src={previewUrl || avatarUrl || ''}
                                     alt="Avatar"
-                                    className="h-full w-full object-cover"
+                                    fill
+                                    className="object-cover"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).src = "https://placeholderfornowgottaupdateitthroughmyghrawlink.com"
                                     }}
