@@ -2,6 +2,8 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Inter } from "next/font/google";
 import { Footer } from "@/components/Footer";
+import { SessionProvider } from "@/contexts/SessionContext";
+import { QueryProvider } from '@/providers/QueryProvider'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +24,15 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={inter.className + " text-white "}>
-        <Navbar />
-        <div className="min-h-[80vh]">{children}</div>
-        <Footer />
+    <html lang="en">
+      <body className={inter.className}>
+        <QueryProvider>
+          <SessionProvider>
+            <Navbar />
+            <div className="min-h-[80vh]">{children}</div>
+            <Footer />
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   );

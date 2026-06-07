@@ -34,3 +34,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# micro-contracts
+.github
+
+# sql backup
+full_dbbackup.sql
+
+tmpclaude-4f3d-cwd
+tmpclaude-ae45-cwd
+tmpclaude-cb84-cwd
+tmpclaude-cea6-cwd
