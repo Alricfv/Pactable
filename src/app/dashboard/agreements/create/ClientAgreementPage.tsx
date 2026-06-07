@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabaseClient';
-import { Trash2, PlusCircle, Download, ChevronDown, ChevronUp, FileText, Shield, Home, Banknote, Users, Building2, User, Check, AlertCircle, Pencil } from 'lucide-react';
+import { Trash2, PlusCircle, Download, ChevronDown, ChevronUp, FileText, Shield, Home, Banknote, Users, Building2, User, Check, AlertCircle, Pencil, Sparkles } from 'lucide-react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { useSessionContext } from '@/contexts/SessionContext';
+import { useAIContractGeneration, useAISectionGeneration } from '@/hooks/useAIGeneration';
 
 import {
   type Contract,
@@ -243,9 +244,11 @@ function PartyEditor({ parties, defaultRoles, onChange }: {
 }
 
 // Definitions Editor
-function DefinitionsEditor({ definitions, onChange }: { 
-  definitions: Contract['definitions']; 
+function DefinitionsEditor({ definitions, onChange, contract, aiSection }: {
+  definitions: Contract['definitions'];
   onChange: (definitions: Contract['definitions']) => void;
+  contract?: Contract | null;
+  aiSection?: ReturnType<typeof useAISectionGeneration>;
 }) {
   const addDefinition = () => {
     onChange({
@@ -268,10 +271,35 @@ function DefinitionsEditor({ definitions, onChange }: {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="font-medium text-gray-900">Contract Definitions</h4>
-        <button onClick={addDefinition} className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800">
-          <PlusCircle size={16} />
-          Add Definition
-        </button>
+        <div className="flex items-center gap-3">
+          {aiSection && contract && (
+            <button
+              onClick={async () => {
+                const result = await aiSection.generateDefinitions({
+                  title: contract.title,
+                  category: contract.category,
+                  articles: contract.articles,
+                });
+                if (result && Array.isArray(result)) {
+                  onChange({ ...definitions, enabled: true, terms: result });
+                }
+              }}
+              disabled={aiSection.isGenerating}
+              className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-800 disabled:opacity-50"
+            >
+              {aiSection.isGenerating ? (
+                <div className="animate-spin rounded-full h-3 w-3 border-2 border-purple-600 border-t-transparent" />
+              ) : (
+                <Sparkles size={14} />
+              )}
+              AI Fill
+            </button>
+          )}
+          <button onClick={addDefinition} className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800">
+            <PlusCircle size={16} />
+            Add Definition
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
@@ -322,10 +350,12 @@ function DefinitionsEditor({ definitions, onChange }: {
 }
 
 // Articles Editor (simplified for terms editing)
-function ArticlesEditor({ articles, onChange, allowAddArticle = false }: { 
-  articles: Contract['articles']; 
+function ArticlesEditor({ articles, onChange, allowAddArticle = false, contract, aiSection }: {
+  articles: Contract['articles'];
   onChange: (articles: Contract['articles']) => void;
   allowAddArticle?: boolean;
+  contract?: Contract | null;
+  aiSection?: ReturnType<typeof useAISectionGeneration>;
 }) {
   const [expandedArticles, setExpandedArticles] = useState<Set<number>>(new Set([0]));
 
@@ -428,12 +458,38 @@ function ArticlesEditor({ articles, onChange, allowAddArticle = false }: {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="font-medium text-gray-900">Contract Articles & Clauses</h4>
-        {allowAddArticle && (
-          <button onClick={addArticle} className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800">
-            <PlusCircle size={16} />
-            Add Article
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {aiSection && contract && (
+            <button
+              onClick={async () => {
+                const result = await aiSection.generateArticles({
+                  title: contract.title,
+                  category: contract.category,
+                  definitions: contract.definitions,
+                  articles: contract.articles,
+                });
+                if (result && Array.isArray(result)) {
+                  onChange(result);
+                }
+              }}
+              disabled={aiSection.isGenerating}
+              className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-800 disabled:opacity-50"
+            >
+              {aiSection.isGenerating ? (
+                <div className="animate-spin rounded-full h-3 w-3 border-2 border-purple-600 border-t-transparent" />
+              ) : (
+                <Sparkles size={14} />
+              )}
+              AI Fill
+            </button>
+          )}
+          {allowAddArticle && (
+            <button onClick={addArticle} className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800">
+              <PlusCircle size={16} />
+              Add Article
+            </button>
+          )}
+        </div>
       </div>
 
       {articles.length === 0 ? (
@@ -735,6 +791,9 @@ export default function ClientAgreementPage() {
   const [activeTab, setActiveTab] = useState<EditorTab>('parties');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const aiGeneration = useAIContractGeneration();
+  const aiSection = useAISectionGeneration();
 
   // Auth guard - show loading while checking
   if (loading || (!user && hasCachedSession())) {
@@ -765,6 +824,30 @@ export default function ClientAgreementPage() {
     const newContract = createContractFromTemplate(template, []);
     setContract(newContract);
     setStep('edit');
+  };
+
+  const handleAIGenerate = async () => {
+    const contractStructure = await aiGeneration.generate(aiPrompt);
+    if (contractStructure) {
+      const aiTemplate: ContractTemplate = {
+        id: 'ai_generated',
+        name: 'AI Generated Contract',
+        description: aiPrompt,
+        category: contractStructure.category || 'general',
+        defaultPartyRoles: ['party_a', 'party_b'],
+        structure: contractStructure as ContractTemplate['structure'],
+        options: {
+          allowCustomClauses: true,
+          allowReorderClauses: true,
+          allowRemoveClauses: true,
+          requiredFields: ['preamble.date', 'parties[0].name', 'parties[1].name'],
+        },
+      };
+      setSelectedTemplate(aiTemplate);
+      const newContract = createContractFromTemplate(aiTemplate, []);
+      setContract(newContract);
+      setStep('edit');
+    }
   };
 
   const updateTitle = (title: string) => {
@@ -996,6 +1079,50 @@ export default function ClientAgreementPage() {
             ))}
           </div>
 
+          {/* AI Generation Card */}
+          <div className="mt-8 p-6 border-2 border-purple-200 bg-purple-50 rounded-xl">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 text-lg">Generate with AI</h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  Describe the contract you need and AI will generate a complete draft for you to review and edit.
+                </p>
+                <textarea
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder="e.g., I need a freelance web development contract for a 3-month project worth $15,000, with milestone payments and IP transfer to the client..."
+                  rows={3}
+                  maxLength={2000}
+                  className="w-full mt-3 px-4 py-3 border border-purple-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                  disabled={aiGeneration.isGenerating}
+                />
+                {aiGeneration.error && (
+                  <p className="text-sm text-red-600 mt-2">{aiGeneration.error}</p>
+                )}
+                <button
+                  onClick={handleAIGenerate}
+                  disabled={aiGeneration.isGenerating || aiPrompt.trim().length < 10}
+                  className="mt-3 px-6 py-2.5 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {aiGeneration.isGenerating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                      Generating your contract...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={16} />
+                      Generate Contract
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* OR Divider */}
           <div className="flex items-center my-10">
             <div className="flex-1 border-t border-gray-300"></div>
@@ -1111,13 +1238,15 @@ export default function ClientAgreementPage() {
               <PartyEditor parties={contract.parties} defaultRoles={selectedTemplate.defaultPartyRoles} onChange={updateParties} />
             )}
 
-            {activeTab === 'definitions' && <DefinitionsEditor definitions={contract.definitions} onChange={updateDefinitions} />}
+            {activeTab === 'definitions' && <DefinitionsEditor definitions={contract.definitions} onChange={updateDefinitions} contract={contract} aiSection={aiSection} />}
 
             {activeTab === 'terms' && (
-              <ArticlesEditor 
-                articles={contract.articles} 
-                onChange={updateArticles} 
+              <ArticlesEditor
+                articles={contract.articles}
+                onChange={updateArticles}
                 allowAddArticle={selectedTemplate.options.allowCustomClauses}
+                contract={contract}
+                aiSection={aiSection}
               />
             )}
 
