@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabaseClient';
 import { DndContext, closestCenter, type DragEndEvent, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -233,7 +234,7 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
         if (sections.length > 0) {
             generatePdf().catch(console.error);
         }
-    }, [title, sections, logoUrl, logoPosition]);
+    }, [title, sections, logoUrl, logoPosition, logoFile?.type]);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over } = event
@@ -461,10 +462,11 @@ export default function EditAgreementClient({ agreement, userId }: { agreement: 
                         
                         {logoUrl ? (
                             <div className="relative w-40 h-24 mb-4 bg-gray-100 rounded-md p-2 flex items-center justify-center border border-gray-200">
-                                <img 
+                                <Image
                                     src={logoUrl} 
                                     alt="Company Logo" 
-                                    className="max-w-full max-h-full object-contain" 
+                                    fill
+                                    className="object-contain p-2" 
                                 />
                                 <button 
                                     type="button"

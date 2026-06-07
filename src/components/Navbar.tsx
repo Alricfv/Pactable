@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { createClient } from '@/lib/supabaseClient'
@@ -83,9 +84,11 @@ export function Navbar() {
             ) : (
               <div className="relative group">
                 {profile?.avatar_url ? (
-                  <img
+                  <Image
                     src={profile.avatar_url}
                     alt="User Profile"
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover cursor-pointer border-2 border-stone-300 hover:border-orange-500 transition-colors"
                   />
                 ) : (
